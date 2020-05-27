@@ -37,4 +37,5 @@ function addRandomFact() {
   // Add it to the page.
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = fact;
+  console.log(fact);
 }

@@ -7,3 +7,30 @@
 #greeting-container {
   margin-top: 20px;
 }
+
+footer {
+  margin-left: auto;
+  margin-right: auto;
+  width: 650px;
+
+}
+/* Style all font awesome icons */
+.icon {
+  padding: 20px;
+  font-size: 30px;
+  width: 30px;
+  text-align: center;
+  text-decoration: none;
+  margin: 5px 2px;
+  border-radius: 50%;
+}
+
+/* Add a hover effect if you want */
+.icon:hover {
+  opacity: 0.7;
+}
+
+
+
+
+
