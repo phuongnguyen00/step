@@ -1,0 +1,56 @@
+<!--<script src="https://kit.fontawesome.com/6593008338.js" crossorigin="anonymous"></script>-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Contact</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/6593008338.js" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+  </head>
+
+  <div id="nav-home">
+    <ul>
+      <li><a class="underline" href="index.html#about">ABOUT</a></li>
+      <li><a class="underline" href="education.html">EDUCATION</a></li>
+      <li><a class="underline" href="projects.html">PROJECTS</a></li>
+      <li><a class="active-page" href="contact-form.html">CONTACT</a></li>
+    </ul>
+    <a href="index.html"><img id="logo" src="images/phuong-logo.png" alt="phuong-nguyen-logo"></a>
+  </div>
+  
+  <body>
+    <h2>Contact</h2>
+    <div>
+    <p> If you have any questions or just simply want to chat, you could send me an email at phuong.nguyen@pomona.edu, or fill out the form below.
+      I'd be thrilled if someone actually reaches out to me :).
+    </p> </div>
+    <div id="contact-form">
+    <iframe name="thank-you-frame" id="thank-you-frame" style="display:none;" onload="if (submitted) {window.location='thankyou.html';}"></iframe>
+    <form action="https://docs.google.com/forms/d/e/1FAIpQLSegifcB_p2iO0-gHuEkQkVfGbwHB6b18pRc-ezkqyoznOjTUg/formResponse" target="thank-you-frame" method="POST" onsubmit="submitted=true;">
+    <p> 
+    <label>Name</label> <br> 
+    <input type="text" name="entry.2005620554" placeholder = "Phuong Nguyen"><br>
+    <label>Email Address* <br> 
+    </label><input type="text" name="entry.1045781291" placeholder = "phuong.nguyen@pomona.edu" required><br>
+    <label> Message*</label> <br>
+    <textarea rows = "5" name="entry.839337160" placeholder = "Let's chat!" required></textarea><br>
+    <button type="submit"> Send!</button>
+    </form>
+    </div>
+    <p class="end-page"></p>
+  </body>
+
+  <footer class="social-footer">
+    <div id="social-media-icons">
+      <a href="https://www.linkedin.com/in/phuong-nguyen-411b70151/" target="_blank"> <i class="fab fa-linkedin-in"></i></a>
+      <a href="https://github.com/phuongnguyen00/" target="_blank"> <i class="fab fa-github"></i></a>
+    </div>
+    <p id="email-address">Email: phuong.nguyen@pomona.edu</p>
+    <div class="contact-info">
+        <p style="font-size:12px">Phuong Nguyen, 2020</p>
+    </div>
+  </footer>
+
+</html>
