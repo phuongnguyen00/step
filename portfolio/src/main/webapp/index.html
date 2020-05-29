@@ -1,27 +1,72 @@
+<!--<script src="https://kit.fontawesome.com/6593008338.js" crossorigin="anonymous"></script>-->
+
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>My Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phuong Nguyen</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="https://kit.fontawesome.com/6593008338.js" crossorigin="anonymous"></script>
     <script src="script.js"></script>
   </head>
-  <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is Phuong Nguyen's portfolio.</p>
-      <img src="images/phuong-nguyen.jpg" alt="phuong-nguyen-photo" style="width:200px;height:300px;">
-      <p>Click here to get a random message:</p>
-      <!--<button onclick="addRandomGreeting()">Hello</button>-->
-      <button onclick="addRandomFact()">More about me!</button>
-      <div id="greeting-container"></div>
+
+    <div id="nav-home">
+      <input type="checkbox" id="check">
+      <label for="check" class="checkbtn">
+        <i class="fas fa-bars"></i>
+      </label>
+      
+      <ul>
+        <li><a class="underline" href="index.html#about">ABOUT</a></li>
+        <li><a class="underline" href="education.html">EDUCATION</a></li>
+        <li><a class="underline" href="projects.html">PROJECTS</a></li>
+        <li><a class="underline" href="contact-form.html">CONTACT</a></li>
+        <!--<div class="drop-down content"> 
+          <a href="leader.html">Education</a>
+          <a href="leader.html">Projects</a>
+        </div>-->
+      </ul>
+      <a href="index.html"><img id="logo" src="images/phuong-logo.png" alt="phuong-nguyen-logo"></a>
     </div>
 
-    <footer>
-        <p>More about me on these platforms:</p>
-        <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
-        <a href="https://www.linkedin.com/in/phuong-nguyen-411b70151/" class="icon icon-linkedin"></a>
-        <a href="https://github.com/phuongnguyen00/" class="icon icon-github"></a>
-    </footer>
+     <div class="one-screen" id="site-title">
+        <h1>Hi! I'm <span id="my-name">Phuong Nguyen</span>.<br> I'm a Google STEP Intern.</br>
+        <form action="#about" method="get"><button id="home-button">About</button></form></h1>
+    </div>
+
+    <body>
+   <!--<nav id="nav-work">
+        <a href="index.html">Home</a>
+        <a href="leader.html">Leadership</a>
+        <a href="#">Projects</a>
+        <a href="contact-form.html">Contact</a>
+    </nav>-->
+    
+    <div id="about">
+      <h2>About me </h2>
+      <img id="portrait" src="images/phuong-nguyen.png" alt="phuong-nguyen-photo">
+      <p class="below-image">I'm a rising junior studying Computer Science and Mathematics at Pomona College.<br>
+         I'm passionate about solving problems and empowering people.</p>
+      <p>I am currently a STEP (Student Training in Engineering Program) intern at Google.</p>
+      <p>In my free time, I enjoy doing brush lettering, reading, and practicing yoga.</p>
+      <p>View my <a href="projects.html">recent projects</a>.</p>
+      <p> <a href="contact-form.html">Contact</a> </a> me!</p>
+    </div>
   </body>
+
+  
+
+    <footer class="social-footer">
+      <div id="social-media-icons">
+        <a href="https://www.linkedin.com/in/phuong-nguyen-411b70151/" target="_blank"> <i class="fab fa-linkedin-in"></i></a>
+        <a href="https://github.com/phuongnguyen00/" target="_blank"> <i class="fab fa-github"></i></a>
+      </div>
+      <p id="email-address">Email: phuong.nguyen@pomona.edu</p>
+      <div class="contact-info">
+          <p style="font-size:12px">Phuong Nguyen, 2020</p>
+      </div>
+    </footer>
+    
+    
+     
 </html>
