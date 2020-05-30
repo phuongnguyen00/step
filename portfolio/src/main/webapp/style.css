@@ -205,9 +205,24 @@ a.active-page:active:before{
     margin-left: 20px; 
 }
 
+#logo-home {
+    width: 31.3px;
+    height: 65.3px;
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    float:left;
+    object-fit: scale-down;
+    padding: 12px 20px;
+    margin-left: 20px; 
+}
+
 @media screen and (max-width: 1000px){
-    img#logo{
+    img#logo-home{
         visibility:hidden;
+    }
+    img#logo{
+        display:none;
     }
 }
 
