@@ -319,6 +319,18 @@ a.active-page:active:before{
 /* PART 2: ABOUT ME*/
 /* Scale my portrait so that the photo is not squeezed*/
 
+/* Styling of separate about*/
+#face-photo {
+    width: 250px;
+    height: 250px;
+    object-fit: scale-down;
+    display: block;
+    margin-left:auto;
+    margin-right:auto;
+    width:70%;
+}
+
+/* Styling of the homemade about*/
 #about {
     text-align:center;
     margin-bottom:100px;
