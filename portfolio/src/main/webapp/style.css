@@ -21,6 +21,13 @@ a {
     color: #fca4a2;
 }
 
+h1 {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight:700;
+    font-size: 50px;
+}
+
 h2 {
     text-align:center;
     font-family: 'Montserrat', sans-serif;
@@ -57,6 +64,8 @@ iframe {
     width: 560px;
     height: 315px; 
 }
+
+/* Style the back to top element*/
 .end-page {
     margin-bottom: 100px;
     font-style:italic;
@@ -228,10 +237,15 @@ a.active-page:active:before{
 
 /* Style the site title*/
 #site-title{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
     text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-weight:400;
-    font-size: 27px;
+    margin: 10% 0;
+    min-height: 200px;
+    align-item: center;
 }
 
 /* Change the opacity of the background image*/
@@ -248,7 +262,13 @@ a.active-page:active:before{
     z-index: -1;
 }
 
-/* Make the text at the center of the screen*/
+#bottom-footer{
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Make the text at the center of the screen
 #site-title h1{
     text-align: center;
     float: left;
@@ -257,6 +277,13 @@ a.active-page:active:before{
     position: absolute;
     transform: translate(-50%, -50%)
 }
+/*Style the site title*
+#site-title{
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight:400;
+    font-size: 70px;
+}*/
 #my-name{
     color: #fca4a2;
 }
@@ -352,8 +379,20 @@ a.active-page:active:before{
     object-fit:scale-down;
 }
 
+/* Style the text right below an image*/
 .below-image{
     padding-top:30px;
+}
+
+/* Style bottom footer of the home page exclusively*/
+#bottom-footer-home{
+    padding: 10px 20px;
+    width: 100%;
+    text-align:center;
+    box-sizing:border-box;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
 /* Style social media footer*/
@@ -417,19 +456,22 @@ a.active-page:active:before{
     text-align: left;
 }
 
+
 /* Style the thank you note*/
 #thank-you{
-    margin-bottom: 5%;
-    margin-top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
     text-align: center;
+    margin: 10% 0;
+    min-height: 200px;
+    align-item: center;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 25px;
     color: #fca4a2;
-    padding-top: 10%;
-    /*background-color:  #fff7f1;*/
-    width: 100%;
-    text-align:center;
 }
 
 #stick-footer {
