@@ -272,22 +272,6 @@ a.active-page:active:before{
     width: 100%;
 }
 
-/* Make the text at the center of the screen
-#site-title h1{
-    text-align: center;
-    float: left;
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    transform: translate(-50%, -50%)
-}
-/*Style the site title*
-#site-title{
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-weight:400;
-    font-size: 70px;
-}*/
 #my-name{
     color: #fca4a2; /*salmonpink*/
 }
@@ -542,7 +526,7 @@ figcaption{
 }
 
 #stick-footer {
-    position: relative;
+    position: absolute;
     bottom: 0;
     width: 100%;
 }
