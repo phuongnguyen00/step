@@ -40,6 +40,10 @@ h2 {
     margin-top: 10%;
 }
 
+h2.next{
+    margin-top: 4%;
+}
+
 h3 {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
@@ -263,7 +267,7 @@ a.active-page:active:before{
 }
 
 #bottom-footer{
-    position: relative;
+    position: absolute;
     bottom: 0;
     width: 100%;
 }
@@ -285,7 +289,7 @@ a.active-page:active:before{
     font-size: 70px;
 }*/
 #my-name{
-    color: #fca4a2;
+    color: #fca4a2; /*salmonpink*/
 }
 
 /* Navigation bar home screen on index file*/
@@ -348,13 +352,38 @@ a.active-page:active:before{
 
 /* Styling of separate about*/
 #face-photo {
-    width: 250px;
-    height: 250px;
+    width: 280px;
+    height: 280px;
     object-fit: scale-down;
     display: block;
     margin-left:auto;
     margin-right:auto;
     width:70%;
+}
+
+/* Styling of admissions about*/
+#sage-photo {
+    width: 350px;
+    height: 350px;
+    object-fit: scale-down;
+    display: block;
+    margin-left:auto;
+    margin-right:auto;
+    width:70%;
+    margin-top: 2%;
+}
+
+figcaption{
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    padding-top: 10px;
+    font-style: italic;
+}
+
+.office-links{
+    color: #fca4a2;
+    text-decoration: none;
 }
 
 /* Styling of the homemade about*/
@@ -382,6 +411,44 @@ a.active-page:active:before{
 /* Style the text right below an image*/
 .below-image{
     padding-top:30px;
+}
+
+.below-image-cap{
+    padding-top:20px;
+}
+
+/* Style the text right below an image*/
+.before-image{
+    padding-bottom:30px;
+}
+
+/*Style the images for Resident Advisor Roles*/
+.image-row{
+    display: flex;
+    box-sizing:border-box;
+}
+
+.column-left{
+    flex:50%;
+    padding: 5px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+}
+
+.column-right{
+    flex:50%;
+    padding: 5px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+#event-photo{
+    width: 100%;
+    object-fit: scale-down;
+    display: block;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 /* Style bottom footer of the home page exclusively*/
@@ -475,10 +542,12 @@ a.active-page:active:before{
 }
 
 #stick-footer {
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100%;
 }
+
+
 
 
 
