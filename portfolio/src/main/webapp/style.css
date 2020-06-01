@@ -1,9 +1,539 @@
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@1,300&display=swap');
+
+
+/* Styling for home
+ page*/
+body{
+    max-width: 100%;
+    margin: 0;
+    height:100%; /*making the background color spread the whole screen for each block*/
 }
 
-#greeting-container {
-  margin-top: 20px;
+div {
+    margin-left: 150px;
+    margin-right:150px;
 }
+
+a {
+    text-decoration: underline;
+    color: #fca4a2;
+}
+
+h1 {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight:700;
+    font-size: 50px;
+}
+
+h2 {
+    text-align:center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 50px;
+    padding-bottom: 0px;
+    color: #fca4a2;
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-top: 10%;
+}
+
+h2.next{
+    margin-top: 4%;
+}
+
+h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+}
+
+h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 25px;
+}
+
+/* Add the font for the paragraph tag and list tag*/
+p, li {
+    font-family: 'Raleway', sans-serif;
+    font-size: 20px;
+    line-height: 150%;
+}
+
+iframe {
+    display: block;
+    width: 560px;
+    height: 315px; 
+}
+
+/* Style the back to top element*/
+.end-page {
+    margin-bottom: 100px;
+    font-style:italic;
+}
+
+#content-home {
+    text-align: center;
+}
+
+/*This make each tag with class one-screen the whole screen*/
+.one-screen {
+    height: 100vh;
+}
+
+.social-media a{
+    font-size: 50px;
+    margin: 0 10px 0 0;
+    color: #000000;
+    text-decoration: none;
+    background: #b7b6b6;
+    padding: 15px;
+    width: 26px;
+    text-align:center;
+    border-radius:50%;
+}
+
+
+/* Style the home navigation bar*/
+#nav-home {
+    display: inline;
+    overflow: hidden;
+    position: relative;
+}
+
+#nav-home ul{
+    float: right;
+    margin-right: 0px;
+}
+
+#nav-home ul li{
+    display:inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight:600; 
+}
+
+/* Style the links inside home navigation bar*/
+#nav-home a.underline {
+    text-align: center;
+    font-size: 12px;
+    color: black;
+    padding: 12px 20px;
+    float: right;
+    text-decoration: none;
+    margin-right: 50px;
+    margin-top: 0px;
+}
+
+/* Style the hover effect for the home navigation bar*/
+a.underline {
+    position: relative;
+}
+
+a.underline:before{
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0.5px;
+    left: 0.5px;
+    right: 0.5px;
+    background-color:#fca4a2;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Effect is the same both when the link is hovered and when the link is active*/
+a.underline:hover:before,
+a.underline:active:before{
+    visibility: visible;
+    width: 100%;
+}
+
+/* Style the same for the active page*/
+.active-page {
+    text-align: center;
+    font-size: 12px;
+    color: #fca4a2;
+    padding: 12px 20px;
+    float: right;
+    text-decoration: none;
+    margin-right: 50px;
+    margin-top: 0px;
+    position: relative;
+}
+
+a.active-page:before{
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0.5px;
+    left: 0.5px;
+    right: 0.5px;
+    background-color:#fca4a2;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Effect is the same both when the link is hovered and when the link is active*/
+a.active-page:hover:before,
+a.active-page:active:before{
+    visibility: visible;
+    width: 100%;
+}
+
+/* Style the menu icon and hide it temporarily*/
+.checkbtn{
+    font-size: 30px;
+    color: black;
+    float: right;
+    margin-right: 40px;
+    line-height: 80px;
+    display: none;
+}
+
+#check{
+    display: none;
+}
+
+@media (max-width: 952px){
+    #nav-home ul li a{
+        font-size:12px;
+    }
+}
+
+/*Style the logo*/
+#logo {
+    width: 31.3px;
+    height: 65.3px;
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    float:left;
+    object-fit: scale-down;
+    padding: 12px 20px;
+    margin-left: 20px; 
+}
+
+#logo-home {
+    width: 31.3px;
+    height: 65.3px;
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    float:left;
+    object-fit: scale-down;
+    padding: 12px 20px;
+    margin-left: 20px; 
+}
+
+@media screen and (max-width: 1000px){
+    img#logo-home{
+        visibility:hidden;
+    }
+    img#logo{
+        display:none;
+    }
+}
+
+/* Style the site title*/
+#site-title{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    margin: 10% 0;
+    min-height: 200px;
+    align-item: center;
+}
+
+/* Change the opacity of the background image*/
+#site-title::before{
+    content: "";
+    background-image: url(images/mountains.jpg);
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.75;
+    z-index: -1;
+}
+
+#bottom-footer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+#my-name{
+    color: #fca4a2; /*salmonpink*/
+}
+
+/* Navigation bar home screen on index file*/
+#nav-work {
+    width: 100%;
+    background-color: #fff7f1;
+    overflow: hidden;
+    font-weight:600;
+    position: sticky;
+    position: -webkit-sticky;
+    margin:0;
+    top:0;
+}
+
+/* Nav bar work screen links*/ 
+#nav-work a {
+    float: left;
+    text-align: center;
+    padding: 12px;
+    color: black;
+    text-decoration:none;
+    font-family: 'Montserrat', sans-serif;
+    font-size:18px;
+    top:0px;
+}
+
+/* Nav bar home screen when hovers over*/ 
+#nav-work a:hover{
+    opacity: 0.5;
+}
+
+/* Automatically display the navigation bar vertically on screens less than 500 px*/
+@media screen and (max-width: 500px) {
+    nav a {
+        float: none;
+        display: block;
+    }
+}
+
+/*Customize learn more home button */
+#home-button {
+    display: inline;
+    font-size: 20px;
+    padding: 12px 28px;
+    background-color: transparent;
+    color: black;
+    border-radius: 18px;
+    display: inline-block;
+    margin: 4px 2px;
+    border: 1px solid black;
+    font-family:'Raleway', sans-serif;
+}
+
+#home-button:hover {
+    opacity: 50%;
+}
+
+/* PART 2: ABOUT ME*/
+/* Scale my portrait so that the photo is not squeezed*/
+
+/* Styling of separate about*/
+#face-photo {
+    width: 280px;
+    height: 280px;
+    object-fit: scale-down;
+    display: block;
+    margin-left:auto;
+    margin-right:auto;
+    width:70%;
+}
+
+/* Styling of admissions about*/
+#sage-photo {
+    width: 350px;
+    height: 350px;
+    object-fit: scale-down;
+    display: block;
+    margin-left:auto;
+    margin-right:auto;
+    width:70%;
+    margin-top: 2%;
+}
+
+figcaption{
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    padding-top: 10px;
+    font-style: italic;
+}
+
+.office-links{
+    color: #fca4a2;
+    text-decoration: none;
+}
+
+/* Styling of the homemade about*/
+#about {
+    text-align:center;
+    margin-bottom:100px;
+    margin-top: -5px;
+}
+
+#about::before { 
+    display: block; 
+    content: " "; 
+    margin-top: -10px; 
+    height: -15px; /* change this*/
+    visibility: hidden; 
+    pointer-events: none;
+}
+
+#portrait{
+    width: 250px;
+    height: 250px;
+    object-fit:scale-down;
+}
+
+/* Style the text right below an image*/
+.below-image{
+    padding-top:30px;
+}
+
+.below-image-cap{
+    padding-top:20px;
+}
+
+/* Style the text right below an image*/
+.before-image{
+    padding-bottom:30px;
+}
+
+/*Style the images for Resident Advisor Roles*/
+.image-row{
+    display: flex;
+    box-sizing:border-box;
+}
+
+.column-left{
+    flex:50%;
+    padding: 5px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+}
+
+.column-right{
+    flex:50%;
+    padding: 5px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+#event-photo{
+    width: 100%;
+    object-fit: scale-down;
+    display: block;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Style bottom footer of the home page exclusively*/
+#bottom-footer-home{
+    padding: 10px 20px;
+    width: 100%;
+    text-align:center;
+    box-sizing:border-box;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Style social media footer*/
+.social-footer{
+    padding: 10px 20px;
+    background-color:  #fff7f1;
+    width: 100%;
+    text-align:center;
+    box-sizing:border-box;
+}
+
+/* Style all of the icons*/
+#social-media-icons {
+    padding: 20px;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+/* more styling of the icons*/
+.fab {
+    display: inline;
+    margin: auto;
+    font-size: 30px;
+    padding: 10px 20px;
+    border-radius: 50%;
+    color: black;
+}
+
+/* effect styling of the icons*/
+.fab:hover{
+    opacity: 0.7;
+}
+
+/* style the email address*/
+#email-address{
+    margin-top: 0px;
+}
+
+/* Style the video on projects page so that it's responsive*/
+.frame-container {
+    position:relative;
+    overflow: hidden;
+    padding-top: 56.25%;
+}
+
+.responsive-iframe{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border: none;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+/* Style the contact form*/
+#contact-form{
+    text-align: left;
+}
+
+
+/* Style the thank you note*/
+#thank-you{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    margin: 10% 0;
+    min-height: 200px;
+    align-item: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 25px;
+    color: #fca4a2;
+}
+
+#stick-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+
+
+
+
+  
+  
