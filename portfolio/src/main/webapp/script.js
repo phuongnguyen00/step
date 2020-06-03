@@ -61,12 +61,11 @@ function getComments() {
     
     const commentsList = document.getElementById('comments-container');
     commentsList.innerHTML = '';
-    commentsList.appendChild(
-        createListElement('Comment: ' + comments[0]));
-    commentsList.appendChild(
-        createListElement('Comment: ' + comments[1]));
-    commentsList.appendChild(
-        createListElement('Comment: ' + comments[2]));
+    
+    //add the comments to the comment container
+    comments.forEach((comment)=>{
+        commentsList.appendChild(createListElement(comment))
+    })
   });
 }
 
