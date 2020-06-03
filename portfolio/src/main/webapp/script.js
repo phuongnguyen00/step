@@ -37,7 +37,7 @@ function addRandomFact() {
   // Add it to the page.
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = fact;
-  //console.log(fact);
+  console.log(fact);
 }
 
 /**
@@ -56,8 +56,7 @@ async function getHello() {
  */
 function getComments() {
   fetch('/data').then(response => response.json()).then((comments) => {
-    // stats is an object, not a string, so we have to
-    // reference its fields to create HTML content
+    // comments is the result of response.json()
     
     const commentsList = document.getElementById('comments-container');
     commentsList.innerHTML = '';
@@ -75,4 +74,6 @@ function createListElement(text) {
   liElement.innerText = text;
   return liElement;
 }
+
+
 

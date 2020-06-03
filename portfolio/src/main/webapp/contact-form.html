@@ -43,6 +43,24 @@
     <p class="end-page"></p>
   </body>
 
+    <div id="content">
+      <h2>Comments</h2>
+      <p>Click here to see the comments:</p>
+      <button onclick="getComments()">See comments!</button>
+      <ul id="comments-container"></ul>
+    </div>
+
+    <div id="contact-form">
+    <form action="/data" method="POST">
+
+      <p> <label>Comment:</label><br>
+      <textarea rows = "5" name="comment-input" required></textarea>
+      <br/>
+      <input type="submit"/>
+      </p>
+    </form>
+    </div>
+
   <footer class="social-footer">
     <div id="social-media-icons">
       <a href="https://www.linkedin.com/in/phuong-nguyen-411b70151/" target="_blank"> <i class="fab fa-linkedin-in"></i></a>
