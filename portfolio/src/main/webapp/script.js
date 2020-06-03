@@ -39,3 +39,15 @@ function addRandomFact() {
   greetingContainer.innerText = fact;
   console.log(fact);
 }
+
+/**
+ * Another way to use fetch is by using the async and await keywords. This
+ * allows you to use the return values directly instead of going through
+ * Promises.
+ */
+async function getHello() {
+  const response = await fetch('/data');
+  const hello = await response.text();
+  document.getElementById('hello-container').innerText = hello;
+}
+
