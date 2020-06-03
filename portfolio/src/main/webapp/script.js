@@ -54,21 +54,19 @@ async function getHello() {
 /**
  * Fetches stats from the servers and adds them to the DOM.
  */
-function getServerStats() {
-  fetch('/data').then(response => response.json()).then((stats) => {
+function getComments() {
+  fetch('/data').then(response => response.json()).then((comments) => {
     // stats is an object, not a string, so we have to
     // reference its fields to create HTML content
-
-    const statsListElement = document.getElementById('server-stats-container');
-    statsListElement.innerHTML = '';
-    statsListElement.appendChild(
-        createListElement('Comment: ' + stats));
-    statsListElement.appendChild(
-        createListElement('Comment: ' + stats));
-    statsListElement.appendChild(
-        createListElement('Comment: ' + stats));
-    statsListElement.appendChild(
-        createListElement('Comment: ' + stats));
+    
+    const commentsList = document.getElementById('comments-container');
+    commentsList.innerHTML = '';
+    commentsList.appendChild(
+        createListElement('Comment: ' + comments[0]));
+    commentsList.appendChild(
+        createListElement('Comment: ' + comments[1]));
+    commentsList.appendChild(
+        createListElement('Comment: ' + comments[2]));
   });
 }
 
