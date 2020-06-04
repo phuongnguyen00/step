@@ -63,7 +63,7 @@ function getComments() {
     
     //add the comments to the comment container
     comments.forEach((comment)=>{
-        commentsList.appendChild(createListElement(comment))
+        commentsList.appendChild(createCommentElement(comment))
     })
   });
 }
@@ -73,6 +73,15 @@ function createListElement(text) {
   const liElement = document.createElement('li');
   liElement.innerText = text;
   return liElement;
+}
+
+/** Creates an element that represents a task, including its delete button. */
+function createCommentElement(comment) {
+  const commentElement = document.createElement('li');
+  //taskElement.className = 'task';
+
+  commentElement.innerText = comment.text;
+  return commentElement;
 }
 
 
