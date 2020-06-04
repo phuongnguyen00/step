@@ -68,6 +68,31 @@ function getComments() {
   });
 }
 
+/**
+ * Fetches stats from the servers and adds them to the DOM.
+ */
+function getCommentsUpdated() {
+  fetch('/data').then(response => response.json()).then((comments) => {
+    // comments is the result of response.json()
+    
+    let numComments = document.getElementById("comments-num").value;
+    const commentsList = document.getElementById('comments-container');
+    commentsList.innerHTML = '';
+    
+    //display the number of comments that the user chooses or the maximum number of comments available.
+    let numToIterate = Math.min(numComments, comments.length);
+    //add the comments to the container
+    console.log("the number chosen is: " + numComments);
+    console.log("the number to be printed is " + numToIterate);
+    for (let i = 0; i < numToIterate; i++ ) {
+        commentsList.appendChild(createCommentElement(comments[i]));
+        console.log(comments[i]);
+    }
+  });
+}
+
+
+
 /** Creates an <li> element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');

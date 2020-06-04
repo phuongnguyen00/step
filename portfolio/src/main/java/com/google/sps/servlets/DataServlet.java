@@ -36,7 +36,9 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private ArrayList<Comment> comments;
-  public static final int MAX_COMMENTS_NUM = 5;
+  //the default number of comments to be displayed when the user loads the page
+  public static final int MAX_COMMENTS_NUM = 20;
+  
   
   @Override
   public void init() {
@@ -79,6 +81,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
+    String commentsNum = request.getParameter("comments-numm");
     String text = getParameter(request, "comment-input", "");
 
     long timestamp = System.currentTimeMillis();

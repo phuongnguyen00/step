@@ -21,7 +21,7 @@
     <a href="index.html"><img id="logo" src="images/phuong-logo.png" alt="phuong-nguyen-logo"></a>
   </div>
   
-  <body onload="getComments()">
+  <body onload="getCommentsUpdated()">
     <h2>Contact</h2>
     <div>
     <p> If you have any questions or just simply want to chat, you could send me an email at phuong.nguyen@pomona.edu, or fill out the form below.
@@ -44,10 +44,22 @@
   </body>
 
     <div id="content">
-      <h2>Comments</h2>
+    <h2>Comments</h2>
       <p>Click here to see the comments:</p>
       <button onclick="getComments()">See comments!</button>
       <ul id="comments-container"></ul>
+
+    <form action="/data" method="POST">
+        <p><label for="comments-num">Choose the maximum number of comments to show:</label></p>
+        <select name="comments-num" id="comments-num" onclick="getCommentsUpdated()">
+            <option value="0" selected>0</option>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
+     <br><br>
+    </form>
     </div>
 
     <div id="contact-form">
