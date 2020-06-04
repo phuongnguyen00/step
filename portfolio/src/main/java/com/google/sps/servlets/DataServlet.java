@@ -15,6 +15,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private ArrayList<Comment> comments;
+  public static final int MAX_COMMENTS_NUM = 5;
   
   @Override
   public void init() {
@@ -49,7 +51,7 @@ public class DataServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(query);
 
     List<Comment> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
+    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(MAX_COMMENTS_NUM))) {
       long id = entity.getKey().getId();
       String text = (String) entity.getProperty("comment-text");
       long timestamp = (long) entity.getProperty("timestamp");
