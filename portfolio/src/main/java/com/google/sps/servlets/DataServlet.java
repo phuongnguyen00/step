@@ -15,6 +15,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import java.util.List;
 import java.util.ArrayList;
@@ -56,6 +59,18 @@ public class DataServlet extends HttpServlet {
     // Get the input from the form.
     String text = getParameter(request, "comment-input", "");
     comments.add(text);
+
+    long timestamp = System.currentTimeMillis();
+
+    //create a new entity
+    Entity cmtEntity = new Entity("Comment");
+    cmtEntity.setProperty("comment-text", text);
+    cmtEntity.setProperty("timestamp", timestamp);
+
+    //create a datastore to store those entities (each of them has content and a timestamp)
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(cmtEntity);
+
     // Respond with the result.
     response.setContentType("text/html;");
     response.getWriter().println(text);
