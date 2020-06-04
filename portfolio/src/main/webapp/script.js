@@ -81,9 +81,12 @@ function getCommentsUpdated() {
     
     //display the number of comments that the user chooses or the maximum number of comments available.
     let numToIterate = Math.min(numComments, comments.length);
+   
+    //get the number of comments and show that to the user
+    const numComShow = document.getElementById("num-cmt");
+    numComShow.innerText = numToIterate;
+     
     //add the comments to the container
-    console.log("the number chosen is: " + numComments);
-    console.log("the number to be printed is " + numToIterate);
     for (let i = 0; i < numToIterate; i++ ) {
         commentsList.appendChild(createCommentElement(comments[i]));
         console.log(comments[i]);

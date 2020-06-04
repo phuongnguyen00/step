@@ -40,38 +40,36 @@
     <button type="submit"> Send!</button></p>
     </form></p>
     </div>
-    <p class="end-page"></p>
-  </body>
 
-    <div id="content">
     <h2>Comments</h2>
-      <p>Click here to see the comments:</p>
-      <button onclick="getComments()">See comments!</button>
+    <div>
+      <p>Showing <span id="num-cmt"></span> comments</p> 
       <ul id="comments-container"></ul>
 
     <form action="/data" method="POST">
-        <p><label for="comments-num">Choose the maximum number of comments to show:</label></p>
+        <p><label for="comments-num">Choose the maximum number of comments to show:</label>
         <select name="comments-num" id="comments-num" onclick="getCommentsUpdated()">
             <option value="0">0</option>
             <option value="5" selected>5</option>
             <option value="10">10</option>
             <option value="15">15</option>
             <option value="20">20</option>
-        </select>
-     <br><br>
+        </select></p>
     </form>
     </div>
 
     <div id="contact-form">
     <form action="/data" method="POST">
 
-      <p> <label>Comment:</label><br>
+      <p> <label>Add a comment:</label><br>
       <textarea rows = "5" name="comment-input" required></textarea>
       <br/>
       <input type="submit"/>
       </p>
     </form>
+    <p class="end-page"></p>
     </div>
+    </body>
 
   <footer class="social-footer">
     <div id="social-media-icons">
