@@ -48,6 +48,41 @@ function addRandomFact() {
 async function getHello() {
   const response = await fetch('/data');
   const hello = await response.text();
-  document.getElementById('hello-container').innerText = hello;
+  document.getElementById('hello-container').innerHTML = hello;
 }
+
+/**
+ * Fetches stats from the servers and adds them to the DOM.
+ */
+function getComments() {
+  fetch('/data').then(response => response.json()).then((comments) => {
+    // comments is the result of response.json()
+    
+    const commentsList = document.getElementById('comments-container');
+    commentsList.innerHTML = '';
+    
+    //add the comments to the comment container
+    comments.forEach((comment)=>{
+        commentsList.appendChild(createCommentElement(comment))
+    })
+  });
+}
+
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
+
+/** Creates an element that represents a task, including its delete button. */
+function createCommentElement(comment) {
+  const commentElement = document.createElement('li');
+  //taskElement.className = 'task';
+
+  commentElement.innerText = comment.text;
+  return commentElement;
+}
+
+
 
