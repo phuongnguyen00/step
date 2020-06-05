@@ -59,7 +59,7 @@
     
     <p> Delete all comments: 
         <form action = "/delete-data" method="POST">
-            <button type="submit"> Delete!</button>
+            <button type="submit" onclick=deleteComments()> Delete!</button>
         </form>
     </p>
     
@@ -71,7 +71,7 @@
       <p> <label>Add a comment:</label><br>
       <textarea rows = "5" name="comment-input" required></textarea>
       <br/>
-      <input type="submit"/>
+      <input type="submit" />
       </p>
     </form>
     <p class="end-page"></p>

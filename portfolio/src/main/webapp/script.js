@@ -72,10 +72,10 @@ function getComments() {
  * Fetches stats from the servers and adds them to the DOM.
  */
 function getCommentsUpdated() {
-  fetch('/data').then(response => response.json()).then((comments) => {
+  let numComments = document.getElementById("comments-num").value;
+  fetch('/data?comments-num='+numComments).then(response => response.json()).then((comments) => {
     // comments is the result of response.json()
     
-    let numComments = document.getElementById("comments-num").value;
     const commentsList = document.getElementById('comments-container');
     commentsList.innerHTML = '';
     
@@ -94,7 +94,6 @@ function getCommentsUpdated() {
   });
 }
 
-
 /** Creates an <li> element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');
@@ -105,19 +104,17 @@ function createListElement(text) {
 /** Creates an element that represents a task, including its delete button. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
-  //taskElement.className = 'task';
-
   commentElement.innerText = comment.text;
   return commentElement;
 }
 
-/** Tells the server to delete the task. */
-function deleteComments(comments) {
-  fetch('/delete-data').then(response => response.json()).then(() => {
+/** Tells the server to delete the comment and just get back an empty response. */
+function deleteComments() {
+  fetch('/delete-data').then(response => 
     //fetch has deleted everything using in delete-data
     //therefore, we just need to get the comments
-    return this.getComments();
-  });
+    this.getComments()
+  );
 }
 
 
