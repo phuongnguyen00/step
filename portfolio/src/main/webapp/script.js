@@ -95,7 +95,6 @@ function getCommentsUpdated() {
 }
 
 
-
 /** Creates an <li> element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');
@@ -111,6 +110,19 @@ function createCommentElement(comment) {
   commentElement.innerText = comment.text;
   return commentElement;
 }
+
+/** Tells the server to delete the task. */
+function deleteComments(comments) {
+  fetch('/delete-data').then(response => response.json()).then(() => {
+    //fetch has deleted everything using in delete-data
+    //therefore, we just need to get the comments
+    return this.getComments();
+  });
+}
+
+
+
+
 
 
 

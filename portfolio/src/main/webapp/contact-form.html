@@ -41,7 +41,7 @@
     </form></p>
     </div>
 
-    <h2>Comments</h2>
+    <h2 id="comment-header">Comments</h2>
     <div>
       <p>Showing <span id="num-cmt"></span> comments</p> 
       <ul id="comments-container"></ul>
@@ -56,6 +56,13 @@
             <option value="20">20</option>
         </select></p>
     </form>
+    
+    <p> Delete all comments: 
+        <form action = "/delete-data" method="POST">
+            <button type="submit"> Delete!</button>
+        </form>
+    </p>
+    
     </div>
 
     <div id="contact-form">
