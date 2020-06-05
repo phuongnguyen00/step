@@ -52,8 +52,10 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
+    int commentsNum = Integer.parseInt(request.getParameter("comments-num"));
+
     List<Comment> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(MAX_COMMENTS_NUM))) {
+    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(commentsNum))) {
       long id = entity.getKey().getId();
       String text = (String) entity.getProperty("comment-text");
       long timestamp = (long) entity.getProperty("timestamp");
@@ -101,7 +103,7 @@ public class DataServlet extends HttpServlet {
     // Respond with the result.
     response.setContentType("text/html;");
     response.getWriter().println(text);
-    response.sendRedirect("/contact-form.html");
+    response.sendRedirect("/contact-form.html#comment-header");
   }
 
   /**

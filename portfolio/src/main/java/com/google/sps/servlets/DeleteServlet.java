@@ -48,6 +48,6 @@ public class DeleteServlet extends HttpServlet {
       datastore.delete(entity.getKey());
     }
     
-    response.sendRedirect("/contact-form.html");
+    response.sendRedirect("/contact-form.html#comment-header");
   }
 }
