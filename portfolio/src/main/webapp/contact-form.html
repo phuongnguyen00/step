@@ -57,9 +57,12 @@
         </select></p>
     </form>
     
+    <!-- Whenever the page reloads, the comments are reloaded also. 
+        Therefore, only needs to point the web browser to the URL "/delete-data" and on reloading the page 
+        (as doPost redirects to the page), the comments will be updated. -->
     <p> Delete all comments: 
         <form action = "/delete-data" method="POST">
-            <button type="submit" onclick=deleteComments()> Delete!</button>
+            <button type="submit"> Delete!</button> 
         </form>
     </p>
     </div>
