@@ -39,7 +39,6 @@ public class DataServlet extends HttpServlet {
   //the default number of comments to be displayed when the user loads the page
   public static final int MAX_COMMENTS_NUM = 20;
   
-  
   @Override
   public void init() {
     comments = new ArrayList<Comment>();
@@ -65,7 +64,6 @@ public class DataServlet extends HttpServlet {
     }
 
     Gson gson = new Gson();
-
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(comments));
   }
