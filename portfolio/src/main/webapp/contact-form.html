@@ -46,16 +46,15 @@
       <p>Showing <span id="num-cmt"></span> comments</p> 
       <ul id="comments-container"></ul>
 
-    <form action="/data" method="POST">
         <p><label for="comments-num">Choose the maximum number of comments to show:</label>
-        <select name="comments-num" id="comments-num" onclick="getCommentsUpdated()">
+        <select name="comments-num" id="comments-num" onchange="getCommentsUpdated()">
             <option value="0">0</option>
             <option value="5" selected>5</option>
             <option value="10">10</option>
             <option value="15">15</option>
             <option value="20">20</option>
         </select></p>
-    </form>
+
     
     <!-- Whenever the page reloads, the comments are reloaded also. 
         Therefore, only needs to point the web browser to the URL "/delete-data" and on reloading the page 
@@ -73,7 +72,7 @@
       <p> <label>Add a comment:</label><br>
       <textarea rows = "5" name="comment-input" required></textarea>
       <br/>
-      <input type="submit" />
+      <button type="submit" onclick="getCommentsUpdated()"> Send!</button></p>
       </p>
     </form>
     <p class="end-page"></p>
