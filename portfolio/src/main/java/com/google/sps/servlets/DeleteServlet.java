@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that allows for the deletion of all commments */
 @WebServlet("/delete-data")
 public class DeleteServlet extends HttpServlet {
   @Override
@@ -44,6 +44,7 @@ public class DeleteServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
+    //delete all comments
     for (Entity entity : results.asIterable()) {
       datastore.delete(entity.getKey());
     }
