@@ -102,7 +102,7 @@ function createListElement(text) {
 /** Creates an element that represents a task, including its delete button. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
-  commentElement.innerText = comment.text;
+  commentElement.innerText = comment.email + " says: " + comment.text;
   return commentElement;
 }
 

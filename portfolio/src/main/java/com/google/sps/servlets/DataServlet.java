@@ -15,6 +15,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -57,9 +59,10 @@ public class DataServlet extends HttpServlet {
     for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(commentsNum))) {
       long id = entity.getKey().getId();
       String text = (String) entity.getProperty("comment-text");
+      String email = (String) entity.getProperty("email");
       long timestamp = (long) entity.getProperty("timestamp");
 
-      Comment comment = new Comment(id, text, timestamp);
+      Comment comment = new Comment(id, email, text, timestamp);
       comments.add(comment);
     }
 
@@ -80,19 +83,28 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Only logged-in users can post messages
+    UserService userService = UserServiceFactory.getUserService();
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("contact-form.html#comment-header");
+      return;
+    }
+
     // Get the input from the form.
     String commentsNum = request.getParameter("comments-num");
     String text = getParameter(request, "comment-input", "");
 
     long timestamp = System.currentTimeMillis();
+    String email = userService.getCurrentUser().getEmail();
 
-    //create a new entity
+    // Create a new entity
     Entity cmtEntity = new Entity("Comment");
     cmtEntity.setProperty("comment-text", text);
     cmtEntity.setProperty("timestamp", timestamp);
+    cmtEntity.setProperty("email", email);
     long id = cmtEntity.getKey().getId();
 
-    comments.add(new Comment(id, text, timestamp));
+    comments.add(new Comment(id, email, text, timestamp));
 
     //create a datastore to store those entities (each of them has content and a timestamp)
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
