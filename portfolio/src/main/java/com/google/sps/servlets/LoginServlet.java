@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.PrintWriter;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,13 +41,22 @@ public class LoginServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("text/html");
+    PrintWriter out = response.getWriter();
     UserService userService = UserServiceFactory.getUserService();
-    response.getWriter().println("User is logged in: " + userService.isUserLoggedIn());
-  }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+    // If user is not logged in, show a login form (could also redirect to a login page)
+    System.out.println("From login, the user is logged in: " + userService.isUserLoggedIn());
+    if (!userService.isUserLoggedIn()) {
+      String loginUrl = userService.createLoginURL("/contact-form.html#comment-header");
+      response.sendRedirect(loginUrl);
+      return;
+    }
+
+    // User is logged in, so the request can proceed
+    String logoutUrl = userService.createLogoutURL("/contact-form.html#comment-header");
+    response.sendRedirect(logoutUrl);
   }
     
 }

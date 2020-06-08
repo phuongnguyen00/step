@@ -41,7 +41,12 @@ public class LoginCheckServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-    response.getWriter().println(userService.isUserLoggedIn());
+
+    Gson gson = new Gson();
+    response.setContentType("application/json;");
+    response.getWriter().println(gson.toJson(userService.isUserLoggedIn()));
+    System.out.println("From login check, the user is logged in: " + userService.isUserLoggedIn());
+    
   }
     
 }

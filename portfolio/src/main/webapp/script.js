@@ -75,7 +75,6 @@ function getCommentsUpdated() {
   let numComments = document.getElementById("comments-num").value;
   fetch('/data?comments-num='+numComments).then(response => response.json()).then((comments) => {
     // comments is the result of response.json()
-    
     const commentsList = document.getElementById('comments-container');
     commentsList.innerHTML = '';
     
@@ -89,7 +88,6 @@ function getCommentsUpdated() {
     //add the comments to the container
     for (let i = 0; i < numToIterate; i++ ) {
         commentsList.appendChild(createCommentElement(comments[i]));
-        console.log(comments[i]);
     }
   });
 }
@@ -117,6 +115,33 @@ function deleteComments() {
   );
 }
 
+/**
+ * Displays the form if and only if the user is logged in 
+ */
+function getLogin() {
+  fetch('/login-check').then(response => response.json()).then((logIn) => {
+    
+    const greetingSection = document.getElementById('login-status');
+    const greeting = document.createElement('p');
+    console.log(typeof logIn);
+
+    // Check if the user is logged in or not and display text accordingly
+    if(!logIn) { 
+        console.log("From js, I'm not logged in.");
+        greeting.innerHTML = 'Want to post a comment? <a href="/login">Log in</a>.';
+        document.getElementById('login-form').style.display = 'none';
+    } else {
+        console.log("Get to this step: logged in");
+        greeting.innerHTML = 'Welcome back! <a href="/login">Log out</a>.';
+    }
+    greetingSection.appendChild(greeting);
+  });
+}
+
+function onLoadFunction(){
+    getCommentsUpdated();
+    getLogin();
+}
 
 
 
