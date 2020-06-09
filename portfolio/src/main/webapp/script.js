@@ -140,13 +140,17 @@ function getLogin() {
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('user-name-form').style.display = 'block';
         } else {
-            greeting.innerHTML = 'Welcome back ' + loginInfo[1]+ '! ' + '<a href="/login">Log out</a>.';
-            greeting.innerHTML += '<br><a href="/user-info"> Chage your user name<a>';
-        }
-        
+            greeting.innerHTML = 'Welcome back ' + loginInfo[1]+ '! ' + '<a href="/login">Log out</a> or ';
+            greeting.innerHTML += '<a href="contact-form.html#comment-header" onclick= "changeUserName()"> Change your user name<a>';
+            greeting.innerHTML += '.'
+        }  
     }
     greetingSection.appendChild(greeting);
   });
+}
+
+function changeUserName(){
+    document.getElementById('user-name-form').style.display = 'block';
 }
 
 function onLoadFunction(){

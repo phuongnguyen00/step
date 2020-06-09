@@ -58,11 +58,14 @@ public class DataServlet extends HttpServlet {
     List<Comment> comments = new ArrayList<>();
     for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(commentsNum))) {
       long id = entity.getKey().getId();
-      String text = (String) entity.getProperty("comment-text");
       String email = (String) entity.getProperty("email");
+      String text = (String) entity.getProperty("comment-text");
       long timestamp = (long) entity.getProperty("timestamp");
+      String userName = (String) getUserName(email);
+      System.out.println("From doGet data, the email is: " + email);
+      System.out.println("From doGet data, the userName is: " + userName);
 
-      Comment comment = new Comment(id, email, text, timestamp);
+      Comment comment = new Comment(id, userName, text, timestamp);
       comments.add(comment);
     }
 
@@ -97,16 +100,15 @@ public class DataServlet extends HttpServlet {
     long timestamp = System.currentTimeMillis();
     String email = userService.getCurrentUser().getEmail();
     String userName = getUserName(email);
+
     //find the userName from the email
 
-    // Create a new entity
+    // Create a new entity. Store email in entity, but store user-name in object Comment
     Entity cmtEntity = new Entity("Comment");
     cmtEntity.setProperty("comment-text", text);
     cmtEntity.setProperty("timestamp", timestamp);
-    cmtEntity.setProperty("user-name", userName);
+    cmtEntity.setProperty("email", email);
     long id = cmtEntity.getKey().getId();
-
-    comments.add(new Comment(id, userName, text, timestamp));
 
     //create a datastore to store those entities (each of them has content and a timestamp)
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

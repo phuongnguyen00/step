@@ -51,8 +51,9 @@ public class LoginCheckServlet extends HttpServlet {
         loginInfo.add("0");
         loginInfo.add(null);
     }
-    System.out.println("The user has a user name outside of if statement: " + (loginInfo.get(1) == null));
+    System.out.println("The user has a user name outside of if statement: " + (loginInfo.get(1) != null));
     System.out.println(loginInfo.size());
+    System.out.println(loginInfo.get(1));
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(loginInfo));
