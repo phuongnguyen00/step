@@ -35,38 +35,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/login-check")
-public class LoginCheckServlet extends HttpServlet {
+@WebServlet("/username-email")
+public class UserNameEmailServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
-    ArrayList<String> loginInfo = new ArrayList<String>();
-    if(userService.isUserLoggedIn()) {
-        loginInfo.add("1");
-        String userName = getUserName(userService.getCurrentUser().getUserId());
-        loginInfo.add(userName);
-    } else {
-        loginInfo.add("0");
-        loginInfo.add(null);
-    }
-    Gson gson = new Gson();
-    response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(loginInfo));
-  }
+    String userName = request.getParameter("user-name");
 
-  private String getUserName(String id) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
         new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
+            .setFilter(new Query.FilterPredicate("user-name", Query.FilterOperator.EQUAL, userName));
+
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
-    if (entity == null) {
-      return "";
+    String email = "";
+    if (entity != null) {
+       email = (String) entity.getProperty("email");
     }
-    String userName = (String) entity.getProperty("user-name");
-    return userName;
+    
+    response.setContentType("text/html;");
+    response.getWriter().println(email);
   }
 }
     

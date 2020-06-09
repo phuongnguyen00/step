@@ -56,7 +56,7 @@
       <ul id="comments-container"></ul>
 
         <p><label for="comments-num">Choose the maximum number of comments to show:</label>
-        <select name="comments-num" id="comments-num" onchange="getCommentsUpdated()">
+        <select name="comments-num" id="comments-num" onchange="getCommentsUpdatedShown()">
             <option value="0">0</option>
             <option value="5" selected>5</option>
             <option value="10">10</option>
@@ -67,14 +67,14 @@
 
     <div id="sorting">
         <p><label for="sorting-cmt">Sort the comments based on:</label>
-        <select name="sorting-cmt" id="sorting-cmt" onchange="getCommentsUpdated()">
+        <select name="sorting-cmt" id="sorting-cmt" onchange="getCommentsUpdatedShown()">
             <option value="new" selected>Newest to Oldest</option>
             <option value="old">Oldest to Newest</option>
             <option value="users">Usernames</option>
         </select></p>
     </div>
 
-    <div>
+    <div style="display:none;">
     
     <!-- Whenever the page reloads, the comments are reloaded also. 
         Therefore, only needs to point the web browser to the URL "/delete-data" and on reloading the page 

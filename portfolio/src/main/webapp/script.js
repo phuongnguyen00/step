@@ -69,9 +69,51 @@ function getComments() {
 }
 
 /**
+ * Access the data entity to get the email associated with the username ~ HashMap
+ */
+
+function getEmail(userName){
+    fetch('/username-email?user-name='+userName).then(response => {
+        return response;
+    });
+}
+
+/** Creates an element that represents a task, including its delete button. */
+function createCommentElementDelete(comment) {
+  const commentElement = document.createElement('li');
+  const textElement = document.createElement('span');
+  textElement.innerText = comment.userName + " says: " + comment.text + " ";
+
+  const deleteButtonElement = document.createElement('button');
+  deleteButtonElement.innerText = 'Delete';
+  deleteButtonElement.addEventListener('click', () => {
+    deleteComment(comment);
+
+    // Remove the task from the DOM.
+    commentElement.remove();
+  });
+
+  commentElement.appendChild(textElement);
+  commentElement.appendChild(deleteButtonElement);
+  return commentElement;
+}
+
+/*
+* Show the number of comments that is consistent with the login status of the user
+*/
+function getCommentsUpdatedShown(){
+    fetch('/login-check').then(response => response.json()).then((loginInfo) => {
+        const logIn = !! + loginInfo[0];
+        const userName = loginInfo[1];
+        const loggedInWithUserName = logIn && (Boolean(userName));
+        this.getCommentsUpdated(loggedInWithUserName, userName);
+    });
+}
+/**
  * Fetches stats from the servers and adds them to the DOM.
  */
-function getCommentsUpdated() {
+
+function getCommentsUpdated(loggedInWithUserName, currentUserName) {
   let numComments = document.getElementById("comments-num").value;
   let sortingOrder = document.getElementById("sorting-cmt").value;
 
@@ -86,12 +128,32 @@ function getCommentsUpdated() {
     //get the number of comments and show that to the user
     const numComShow = document.getElementById("num-cmt");
     numComShow.innerText = numToIterate;
-     
-    //add the comments to the container
-    for (let i = 0; i < numToIterate; i++ ) {
-        commentsList.appendChild(createCommentElement(comments[i]));
+    
+    // depending whether the user is logged in, show delete button 
+    if (!loggedInWithUserName) {
+        for (let i = 0; i < numToIterate; i++ ){
+            commentsList.appendChild(createCommentElement(comments[i]));
+        }
+    } else {
+        for (let i = 0; i < numToIterate; i++ ){
+            if (currentUserName === comments[i].userName) {
+                console.log("I'm here, which means the user has the same name as this comment");
+                console.log(comments[i].text);
+                commentsList.appendChild(createCommentElementDelete(comments[i]));
+            } else {
+                commentsList.appendChild(createCommentElement(comments[i]));
+            }
+        }
     }
+    
   });
+}
+
+/** Tells the server to delete one comment. */
+function deleteComment(comment) {
+  const params = new URLSearchParams();
+  params.append('id', comment.id);
+  fetch('/delete-comment', {method: 'POST', body: params});
 }
 
 /** Creates an <li> element containing text. */
@@ -101,7 +163,7 @@ function createListElement(text) {
   return liElement;
 }
 
-/** Creates an element that represents a task, including its delete button. */
+/** Creates an element that represents a comment, without delete button. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
   commentElement.innerText = comment.userName + " says: " + comment.text;
@@ -122,12 +184,13 @@ function deleteComments() {
  */
 function getLogin() {
   fetch('/login-check').then(response => response.json()).then((loginInfo) => {
-    
     //loginInfo is an arrayList where the first element indicates whether the user is logged in,
     //and the second element tells the userName
     const greetingSection = document.getElementById('login-status');
     const greeting = document.createElement('p');
-    let logIn = !! + loginInfo[0];
+    const logIn = !! + loginInfo[0];
+    const userName = loginInfo[1];
+    let loggedInWithUserName = false;
 
     // Check if the user is logged in or not and display text accordingly
     if(!logIn) { 
@@ -141,9 +204,10 @@ function getLogin() {
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('user-name-form').style.display = 'block';
         } else {
-            greeting.innerHTML = 'Welcome back ' + loginInfo[1]+ '! ' + '<a href="/login">Log out</a> or ';
-            greeting.innerHTML += '<a href="contact-form.html#comment-header" onclick= "changeUserName()"> Change your user name<a>';
-            greeting.innerHTML += '.'
+            greeting.innerHTML = 'Welcome back ' + userName+ '! ' + '<a href="/login">Log out</a> or ';
+            greeting.innerHTML += '<a href="contact-form.html#comment-header" onclick= "changeUserName()"> Change your username<a>';
+            greeting.innerHTML += '.';
+            loggedInWithUserName = true;
         }  
     }
     greetingSection.appendChild(greeting);
@@ -155,8 +219,8 @@ function changeUserName(){
 }
 
 function onLoadFunction(){
-    getCommentsUpdated();
     getLogin();
+    getCommentsUpdatedShown();
 }
 
 

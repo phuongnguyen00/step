@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.PrintWriter;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,39 +36,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/login-check")
-public class LoginCheckServlet extends HttpServlet {
+@WebServlet("/user-info")
+public class UserInfoServlet extends HttpServlet {
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-    ArrayList<String> loginInfo = new ArrayList<String>();
-    if(userService.isUserLoggedIn()) {
-        loginInfo.add("1");
-        String userName = getUserName(userService.getCurrentUser().getUserId());
-        loginInfo.add(userName);
-    } else {
-        loginInfo.add("0");
-        loginInfo.add(null);
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("contact-form.html#comment-header");
+      return;
     }
-    Gson gson = new Gson();
-    response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(loginInfo));
-  }
 
-  private String getUserName(String id) {
+    String email = userService.getCurrentUser().getEmail();
+    String userName = request.getParameter("user-name");
+    String id = userService.getCurrentUser().getUserId();
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query =
-        new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
-    PreparedQuery results = datastore.prepare(query);
-    Entity entity = results.asSingleEntity();
-    if (entity == null) {
-      return "";
-    }
-    String userName = (String) entity.getProperty("user-name");
-    return userName;
-  }
-}
-    
+    //Create a new entity for the current user, with the key is the user's id
+    Entity entity = new Entity("UserInfo", id);
+    entity.setProperty("id", id);
+    entity.setProperty("email", email);
+    entity.setProperty("user-name", userName);
+    // The put() function automatically inserts new data or updates existing data based on ID
+    datastore.put(entity);
 
+    response.sendRedirect("contact-form.html#comment-header");
+  }
+
+}

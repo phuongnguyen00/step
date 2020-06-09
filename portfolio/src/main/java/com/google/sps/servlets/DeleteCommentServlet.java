@@ -15,8 +15,6 @@
 
 package com.google.sps.servlets;
 
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -24,6 +22,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.util.List;
@@ -34,40 +34,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/login-check")
-public class LoginCheckServlet extends HttpServlet {
+/** Servlet that allows for the deletion of all commments */
+@WebServlet("/delete-comment")
+public class DeleteCommentServlet extends HttpServlet {
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
-    ArrayList<String> loginInfo = new ArrayList<String>();
-    if(userService.isUserLoggedIn()) {
-        loginInfo.add("1");
-        String userName = getUserName(userService.getCurrentUser().getUserId());
-        loginInfo.add(userName);
-    } else {
-        loginInfo.add("0");
-        loginInfo.add(null);
-    }
-    Gson gson = new Gson();
-    response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(loginInfo));
-  }
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    long id = Long.parseLong(request.getParameter("id"));
 
-  private String getUserName(String id) {
+    Key taskEntityKey = KeyFactory.createKey("Comment", id);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query =
-        new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
-    PreparedQuery results = datastore.prepare(query);
-    Entity entity = results.asSingleEntity();
-    if (entity == null) {
-      return "";
-    }
-    String userName = (String) entity.getProperty("user-name");
-    return userName;
+    datastore.delete(taskEntityKey);
   }
+  
 }
-    
-
