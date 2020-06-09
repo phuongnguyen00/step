@@ -96,15 +96,17 @@ public class DataServlet extends HttpServlet {
 
     long timestamp = System.currentTimeMillis();
     String email = userService.getCurrentUser().getEmail();
+    String userName = getUserName(email);
+    //find the userName from the email
 
     // Create a new entity
     Entity cmtEntity = new Entity("Comment");
     cmtEntity.setProperty("comment-text", text);
     cmtEntity.setProperty("timestamp", timestamp);
-    cmtEntity.setProperty("email", email);
+    cmtEntity.setProperty("user-name", userName);
     long id = cmtEntity.getKey().getId();
 
-    comments.add(new Comment(id, email, text, timestamp));
+    comments.add(new Comment(id, userName, text, timestamp));
 
     //create a datastore to store those entities (each of them has content and a timestamp)
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -126,6 +128,20 @@ public class DataServlet extends HttpServlet {
       return defaultValue;
     }
     return value;
+  }
+
+  private String getUserName(String email){
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query =
+        new Query("UserInfo")
+            .setFilter(new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, email));
+    PreparedQuery results = datastore.prepare(query);
+    Entity entity = results.asSingleEntity();
+    if (entity == null) {
+      return "";
+    }
+    String userName = (String) entity.getProperty("user-name");
+    return userName;
   }
 
 }

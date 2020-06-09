@@ -41,12 +41,38 @@ public class LoginCheckServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-
+    ArrayList<String> loginInfo = new ArrayList<String>();
+    if(userService.isUserLoggedIn()) {
+        loginInfo.add("1");
+        String userName = getUserName(userService.getCurrentUser().getUserId());
+        loginInfo.add(userName);
+        System.out.println("The user has a user name: " + userName);
+    } else {
+        loginInfo.add("0");
+        loginInfo.add(null);
+    }
+    System.out.println("The user has a user name outside of if statement: " + (loginInfo.get(1) == null));
+    System.out.println(loginInfo.size());
     Gson gson = new Gson();
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(userService.isUserLoggedIn()));
+    response.getWriter().println(gson.toJson(loginInfo));
     System.out.println("From login check, the user is logged in: " + userService.isUserLoggedIn());
     
   }
-    
+
+  private String getUserName(String id) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query =
+        new Query("UserInfo")
+            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
+    PreparedQuery results = datastore.prepare(query);
+    Entity entity = results.asSingleEntity();
+    if (entity == null) {
+      return "";
+    }
+    String userName = (String) entity.getProperty("user-name");
+    return userName;
+  }
 }
+    
+

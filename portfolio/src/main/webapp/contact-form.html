@@ -43,6 +43,14 @@
 
     <h2 id="comment-header">Comments</h2>
     <div id="login-status"></div>
+    <div id="user-name-form" style="display:none;">
+         <p><form action="/user-info" method="POST">
+            <p><label>Set your user name* <br></p>
+            </label><input type="text" name="user-name" placeholder = "Phuong" required> <br>
+            <button type="submit"> Send</button>
+        </form></p>
+    </div>
+    
     <div>
       <p>Showing <span id="num-cmt"></span> comments</p> 
       <ul id="comments-container"></ul>

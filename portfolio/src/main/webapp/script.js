@@ -102,7 +102,7 @@ function createListElement(text) {
 /** Creates an element that represents a task, including its delete button. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
-  commentElement.innerText = comment.email + " says: " + comment.text;
+  commentElement.innerText = comment.userName + " says: " + comment.text;
   return commentElement;
 }
 
@@ -119,11 +119,14 @@ function deleteComments() {
  * Displays the form if and only if the user is logged in 
  */
 function getLogin() {
-  fetch('/login-check').then(response => response.json()).then((logIn) => {
+  fetch('/login-check').then(response => response.json()).then((loginInfo) => {
     
+    //loginInfo is an arrayList where the first element indicates whether the user is logged in,
+    //and the second element tells the userName
     const greetingSection = document.getElementById('login-status');
     const greeting = document.createElement('p');
-    console.log(typeof logIn);
+    const changeUserName = document.createElement('button');
+    let logIn = !! + loginInfo[0];
 
     // Check if the user is logged in or not and display text accordingly
     if(!logIn) { 
@@ -132,7 +135,15 @@ function getLogin() {
         document.getElementById('login-form').style.display = 'none';
     } else {
         console.log("Get to this step: logged in");
-        greeting.innerHTML = 'Welcome back! <a href="/login">Log out</a>.';
+        if (!loginInfo[1]) {//if there is no userName
+            greeting.innerHTML = "Welcome! You need to have a user name to post a comment. <br>";
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('user-name-form').style.display = 'block';
+        } else {
+            greeting.innerHTML = 'Welcome back ' + loginInfo[1]+ '! ' + '<a href="/login">Log out</a>.';
+            greeting.innerHTML += '<br><a href="/user-info"> Chage your user name<a>';
+        }
+        
     }
     greetingSection.appendChild(greeting);
   });
