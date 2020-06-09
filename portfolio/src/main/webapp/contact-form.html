@@ -65,6 +65,15 @@
         </select></p>
     </div>
 
+    <div id="sorting">
+        <p><label for="sorting-cmt">Sort the comments based on:</label>
+        <select name="sorting-cmt" id="sorting-cmt" onchange="getCommentsUpdated()">
+            <option value="new" selected>Newest to Oldest</option>
+            <option value="old">Oldest to Newest</option>
+            <option value="users">Usernames</option>
+        </select></p>
+    </div>
+
     <div>
     
     <!-- Whenever the page reloads, the comments are reloaded also. 

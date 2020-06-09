@@ -73,7 +73,9 @@ function getComments() {
  */
 function getCommentsUpdated() {
   let numComments = document.getElementById("comments-num").value;
-  fetch('/data?comments-num='+numComments).then(response => response.json()).then((comments) => {
+  let sortingOrder = document.getElementById("sorting-cmt").value;
+
+  fetch('/data?comments-num='+numComments+'&sorting-cmt='+sortingOrder).then(response => response.json()).then((comments) => {
     // comments is the result of response.json()
     const commentsList = document.getElementById('comments-container');
     commentsList.innerHTML = '';
@@ -125,7 +127,6 @@ function getLogin() {
     //and the second element tells the userName
     const greetingSection = document.getElementById('login-status');
     const greeting = document.createElement('p');
-    const changeUserName = document.createElement('button');
     let logIn = !! + loginInfo[0];
 
     // Check if the user is logged in or not and display text accordingly
