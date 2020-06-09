@@ -68,6 +68,94 @@ function getComments() {
   });
 }
 
+/**
+ * Access the data entity to get the email associated with the username ~ HashMap
+ */
+
+function getEmail(userName){
+    fetch('/username-email?user-name='+userName).then(response => {
+        return response;
+    });
+}
+
+/** Creates an element that represents a task, including its delete button. */
+function createCommentElementDelete(comment) {
+  const commentElement = document.createElement('li');
+  const textElement = document.createElement('span');
+  textElement.innerText = comment.userName + " says: " + comment.text + " ";
+
+  const deleteButtonElement = document.createElement('button');
+  deleteButtonElement.innerText = 'Delete';
+  deleteButtonElement.addEventListener('click', () => {
+    deleteComment(comment);
+
+    // Remove the task from the DOM.
+    commentElement.remove();
+  });
+
+  commentElement.appendChild(textElement);
+  commentElement.appendChild(deleteButtonElement);
+  return commentElement;
+}
+
+/*
+* Show the number of comments that is consistent with the login status of the user
+*/
+function getCommentsUpdatedShown(){
+    fetch('/login-check').then(response => response.json()).then((loginInfo) => {
+        const logIn = !! + loginInfo[0];
+        const userName = loginInfo[1];
+        const loggedInWithUserName = logIn && (Boolean(userName));
+        this.getCommentsUpdated(loggedInWithUserName, userName);
+    });
+}
+/**
+ * Fetches stats from the servers and adds them to the DOM.
+ */
+
+function getCommentsUpdated(loggedInWithUserName, currentUserName) {
+  let numComments = document.getElementById("comments-num").value;
+  let sortingOrder = document.getElementById("sorting-cmt").value;
+
+  fetch('/data?comments-num='+numComments+'&sorting-cmt='+sortingOrder).then(response => response.json()).then((comments) => {
+    // comments is the result of response.json()
+    const commentsList = document.getElementById('comments-container');
+    commentsList.innerHTML = '';
+    
+    //display the number of comments that the user chooses or the maximum number of comments available.
+    let numToIterate = Math.min(numComments, comments.length);
+   
+    //get the number of comments and show that to the user
+    const numComShow = document.getElementById("num-cmt");
+    numComShow.innerText = numToIterate;
+    
+    // depending whether the user is logged in, show delete button 
+    if (!loggedInWithUserName) {
+        for (let i = 0; i < numToIterate; i++ ){
+            commentsList.appendChild(createCommentElement(comments[i]));
+        }
+    } else {
+        for (let i = 0; i < numToIterate; i++ ){
+            if (currentUserName === comments[i].userName) {
+                console.log("I'm here, which means the user has the same name as this comment");
+                console.log(comments[i].text);
+                commentsList.appendChild(createCommentElementDelete(comments[i]));
+            } else {
+                commentsList.appendChild(createCommentElement(comments[i]));
+            }
+        }
+    }
+    
+  });
+}
+
+/** Tells the server to delete one comment. */
+function deleteComment(comment) {
+  const params = new URLSearchParams();
+  params.append('id', comment.id);
+  fetch('/delete-comment', {method: 'POST', body: params});
+}
+
 /** Creates an <li> element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');
@@ -75,14 +163,68 @@ function createListElement(text) {
   return liElement;
 }
 
-/** Creates an element that represents a task, including its delete button. */
+/** Creates an element that represents a comment, without delete button. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
-  //taskElement.className = 'task';
-
-  commentElement.innerText = comment.text;
+  commentElement.innerText = comment.userName + " says: " + comment.text;
   return commentElement;
 }
+
+/** Tells the server to delete the comment and just get back an empty response. */
+function deleteComments() {
+  fetch('/delete-data').then(response => 
+    //fetch has deleted everything using in delete-data
+    //therefore, we just need to get the comments
+    this.getComments()
+  );
+}
+
+/**
+ * Displays the form if and only if the user is logged in 
+ */
+function getLogin() {
+  fetch('/login-check').then(response => response.json()).then((loginInfo) => {
+    //loginInfo is an arrayList where the first element indicates whether the user is logged in,
+    //and the second element tells the userName
+    const greetingSection = document.getElementById('login-status');
+    const greeting = document.createElement('p');
+    const logIn = !! + loginInfo[0];
+    const userName = loginInfo[1];
+    let loggedInWithUserName = false;
+
+    // Check if the user is logged in or not and display text accordingly
+    if(!logIn) { 
+        console.log("From js, I'm not logged in.");
+        greeting.innerHTML = 'Want to post a comment? <a href="/login">Log in</a>.';
+        document.getElementById('login-form').style.display = 'none';
+    } else {
+        console.log("Get to this step: logged in");
+        if (!loginInfo[1]) {//if there is no userName
+            greeting.innerHTML = "Welcome! You need to have a user name to post a comment. <br>";
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('user-name-form').style.display = 'block';
+        } else {
+            greeting.innerHTML = 'Welcome back ' + userName+ '! ' + '<a href="/login">Log out</a> or ';
+            greeting.innerHTML += '<a href="contact-form.html#comment-header" onclick= "changeUserName()"> Change your username<a>';
+            greeting.innerHTML += '.';
+            loggedInWithUserName = true;
+        }  
+    }
+    greetingSection.appendChild(greeting);
+  });
+}
+
+function changeUserName(){
+    document.getElementById('user-name-form').style.display = 'block';
+}
+
+function onLoadFunction(){
+    getLogin();
+    getCommentsUpdatedShown();
+}
+
+
+
 
 
 

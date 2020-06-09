@@ -21,7 +21,7 @@
     <a href="index.html"><img id="logo" src="images/phuong-logo.png" alt="phuong-nguyen-logo"></a>
   </div>
   
-  <body onload="getComments()">
+  <body onload="onLoadFunction()">
     <h2>Contact</h2>
     <div>
     <p> If you have any questions or just simply want to chat, you could send me an email at phuong.nguyen@pomona.edu, or fill out the form below.
@@ -40,26 +40,65 @@
     <button type="submit"> Send!</button></p>
     </form></p>
     </div>
-    <p class="end-page"></p>
-  </body>
 
-    <div id="content">
-      <h2>Comments</h2>
-      <p>Click here to see the comments:</p>
-      <button onclick="getComments()">See comments!</button>
+    <h2 id="comment-header">Comments</h2>
+    <div id="login-status"></div>
+    <div id="user-name-form" style="display:none;">
+         <p><form action="/user-info" method="POST">
+            <p><label>Update your user name* <br>
+            </label><input type="text" name="user-name" placeholder = "Phuong" required><br>
+            <button type="submit"> Send</button>
+        </form></p>
+    </div>
+    
+    <div>
+      <p>Showing <span id="num-cmt"></span> comments</p> 
       <ul id="comments-container"></ul>
+
+        <p><label for="comments-num">Choose the maximum number of comments to show:</label>
+        <select name="comments-num" id="comments-num" onchange="getCommentsUpdatedShown()">
+            <option value="0">0</option>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select></p>
     </div>
 
-    <div id="contact-form">
+    <div id="sorting">
+        <p><label for="sorting-cmt">Sort the comments based on:</label>
+        <select name="sorting-cmt" id="sorting-cmt" onchange="getCommentsUpdatedShown()">
+            <option value="new" selected>Newest to Oldest</option>
+            <option value="old">Oldest to Newest</option>
+            <option value="users">Usernames</option>
+        </select></p>
+    </div>
+
+    <div style="display:none;">
+    
+    <!-- Whenever the page reloads, the comments are reloaded also. 
+        Therefore, only needs to point the web browser to the URL "/delete-data" and on reloading the page 
+        (as doPost redirects to the page), the comments will be updated. -->
+    <p> Delete all comments: 
+        <form action = "/delete-data" method="POST">
+            <button type="submit"> Delete!</button> 
+        </form>
+    </p>
+    </div>
+
+
+    <div id="login-form">
     <form action="/data" method="POST">
 
-      <p> <label>Comment:</label><br>
+      <p> <label>Add a comment:</label><br>
       <textarea rows = "5" name="comment-input" required></textarea>
       <br/>
-      <input type="submit"/>
+      <button type="submit" onclick="getCommentsUpdated()"> Send!</button></p>
       </p>
     </form>
+    <p class="end-page"></p>
     </div>
+    </body>
 
   <footer class="social-footer">
     <div id="social-media-icons">
