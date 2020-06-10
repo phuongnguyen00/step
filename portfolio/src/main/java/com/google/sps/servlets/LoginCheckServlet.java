@@ -45,9 +45,13 @@ public class LoginCheckServlet extends HttpServlet {
     if(userService.isUserLoggedIn()) {
         loginInfo.add("1");
         String userName = getUserName(userService.getCurrentUser().getUserId());
+        String userEmail = userService.getCurrentUser().getEmail();
         loginInfo.add(userName);
+        loginInfo.add(userEmail);
+
     } else {
         loginInfo.add("0");
+        loginInfo.add(null);
         loginInfo.add(null);
     }
     Gson gson = new Gson();

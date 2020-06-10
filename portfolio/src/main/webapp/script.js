@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+let currentEmail = "";
 /**
  * Adds a random greeting to the page.
  */
@@ -37,7 +38,6 @@ function addRandomFact() {
   // Add it to the page.
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = fact;
-  console.log(fact);
 }
 
 /**
@@ -76,6 +76,13 @@ function getEmail(userName){
     fetch('/username-email?user-name='+userName).then(response => {
         return response;
     });
+}
+
+async function getCurrentEmail() {
+  const response = await fetch('/username-email');
+  const email = await response.json();
+  const currentEmail = email;
+  return currentEmail;
 }
 
 /** Creates an element that represents a task, including its delete button. */
@@ -137,8 +144,6 @@ function getCommentsUpdated(loggedInWithUserName, currentUserName) {
     } else {
         for (let i = 0; i < numToIterate; i++ ){
             if (currentUserName === comments[i].userName) {
-                console.log("I'm here, which means the user has the same name as this comment");
-                console.log(comments[i].text);
                 commentsList.appendChild(createCommentElementDelete(comments[i]));
             } else {
                 commentsList.appendChild(createCommentElement(comments[i]));
@@ -190,24 +195,21 @@ function getLogin() {
     const greeting = document.createElement('p');
     const logIn = !! + loginInfo[0];
     const userName = loginInfo[1];
-    let loggedInWithUserName = false;
-
+    const userEmail = loginInfo[2];
+    
     // Check if the user is logged in or not and display text accordingly
     if(!logIn) { 
-        console.log("From js, I'm not logged in.");
         greeting.innerHTML = 'Want to post a comment? <a href="/login">Log in</a>.';
         document.getElementById('login-form').style.display = 'none';
     } else {
-        console.log("Get to this step: logged in");
         if (!loginInfo[1]) {//if there is no userName
-            greeting.innerHTML = "Welcome! You need to have a user name to post a comment. <br>";
+            greeting.innerHTML = "Welcome " + userEmail + "! " + "You need to have a user name to post a comment. You can also " + '<a href="/login">log out</a>' + ".<br>";
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('user-name-form').style.display = 'block';
         } else {
-            greeting.innerHTML = 'Welcome back ' + userName+ '! ' + '<a href="/login">Log out</a> or ';
+            greeting.innerHTML = 'Welcome back ' + userName+ ' (' + userEmail + ')!' + ' <a href="/login">Log out</a> or ';
             greeting.innerHTML += '<a href="contact-form.html#comment-header" onclick= "changeUserName()"> Change your username<a>';
             greeting.innerHTML += '.';
-            loggedInWithUserName = true;
         }  
     }
     greetingSection.appendChild(greeting);

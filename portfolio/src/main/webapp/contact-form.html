@@ -1,5 +1,3 @@
-<!--<script src="https://kit.fontawesome.com/6593008338.js" crossorigin="anonymous"></script>-->
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,6 +5,8 @@
     <title>Contact | Phuong Nguyen</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/6593008338.js" crossorigin="anonymous"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfcx4qjNctMhxpPfQjqMLwGcteeCt4MhU&callback=initMap"
+  type="text/javascript"></script>
     <script src="script.js"></script>
   </head>
 
@@ -45,7 +45,7 @@
     <div id="login-status"></div>
     <div id="user-name-form" style="display:none;">
          <p><form action="/user-info" method="POST">
-            <p><label>Update your user name* <br>
+            <p><label>Update your username* <br>
             </label><input type="text" name="user-name" placeholder = "Phuong" required><br>
             <button type="submit"> Send</button>
         </form></p>
@@ -93,7 +93,7 @@
       <p> <label>Add a comment:</label><br>
       <textarea rows = "5" name="comment-input" required></textarea>
       <br/>
-      <button type="submit" onclick="getCommentsUpdated()"> Send!</button></p>
+      <button type="submit" onclick="getCommentsUpdatedShown()"> Send!</button></p>
       </p>
     </form>
     <p class="end-page"></p>

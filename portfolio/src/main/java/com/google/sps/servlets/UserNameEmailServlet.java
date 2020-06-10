@@ -40,7 +40,7 @@ public class UserNameEmailServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String userName = request.getParameter("user-name");
+    /*String userName = request.getParameter("user-name");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
@@ -52,10 +52,14 @@ public class UserNameEmailServlet extends HttpServlet {
     String email = "";
     if (entity != null) {
        email = (String) entity.getProperty("email");
-    }
-    
-    response.setContentType("text/html;");
-    response.getWriter().println(email);
+    }*/
+    UserService userService = UserServiceFactory.getUserService();
+    String currentUserEmail = userService.getCurrentUser().getEmail();
+    System.out.println("The email of current user from username-email servlet is " + currentUserEmail);
+
+    Gson gson = new Gson();
+    response.setContentType("application/json;");
+    response.getWriter().println(gson.toJson(currentUserEmail));
   }
 }
     
