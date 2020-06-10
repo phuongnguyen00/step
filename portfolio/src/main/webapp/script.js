@@ -203,7 +203,7 @@ function getLogin() {
         document.getElementById('login-form').style.display = 'none';
     } else {
         if (!loginInfo[1]) {//if there is no userName
-            greeting.innerHTML = "Welcome " + userEmail + "! " + "You need to have a user name to post a comment. You can also " + '<a href="/login">log out</a>' + ".<br>";
+            greeting.innerHTML = "Welcome " + userEmail + "! " + "You need to have a username to post a comment. You can also " + '<a href="/login">log out</a>' + ".<br>";
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('user-name-form').style.display = 'block';
         } else {
@@ -220,9 +220,40 @@ function changeUserName(){
     document.getElementById('user-name-form').style.display = 'block';
 }
 
+/** Onload function for contact-form */
 function onLoadFunction(){
     getLogin();
     getCommentsUpdatedShown();
+}
+
+/** Creates a map and adds it to the page. */
+function createMap() {
+  const hanoi = {lat: 21.0278, lng: 105.8342};
+  const highSchool = {lat: 21.0065, lng: 105.7977};
+  const college = {lat: 34.0973, lng: -117.7131};
+
+  const map = new google.maps.Map(
+      document.getElementById("map"));
+  const hanoiMarker = new google.maps.Marker({
+    position: hanoi,
+    map: map,
+    title: 'Ha Noi, my hometown'
+  });
+
+  const collegeMarker = new google.maps.Marker({
+    position: college,
+    map: map,
+    title: "Pomona College, where I'm studying"
+  });
+
+  let allMarkers = [college, hanoi];
+  let bounds = new google.maps.LatLngBounds();
+  for (let i = 0; i < allMarkers.length; i++) {
+    bounds.extend(allMarkers[i]);
+  }
+
+  map.fitBounds(bounds);
+
 }
 
 
