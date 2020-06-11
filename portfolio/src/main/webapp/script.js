@@ -229,11 +229,13 @@ function onLoadFunction(){
 /** Creates a map and adds it to the page. */
 function createMap() {
   const hanoi = {lat: 21.0278, lng: 105.8342};
-  const highSchool = {lat: 21.0065, lng: 105.7977};
+  const googleSF = {lat: 37.773972, lng: -122.431297};
   const college = {lat: 34.0973, lng: -117.7131};
+  const ams = {lat: 21.0065, lng: 105.7977};
 
   const map = new google.maps.Map(
       document.getElementById("map"));
+
   const hanoiMarker = new google.maps.Marker({
     position: hanoi,
     map: map,
@@ -246,15 +248,62 @@ function createMap() {
     title: "Pomona College, where I'm studying"
   });
 
-  let allMarkers = [college, hanoi];
+  const googleSFMarker = new google.maps.Marker({
+    position: googleSF,
+    map: map,
+    visible: false,
+    title: "Google San Francisco"
+  });
+
+  const amsMarker = new google.maps.Marker({
+    position: ams,
+    map: map,
+    visible: false,
+    title: "Hanoi-Amsterdam high school"
+  });
+
+  //default state of map: show two primary markers
+  let allPlaces = [college, hanoi];
   let bounds = new google.maps.LatLngBounds();
-  for (let i = 0; i < allMarkers.length; i++) {
-    bounds.extend(allMarkers[i]);
+  for (let i = 0; i < allPlaces.length; i++) {
+    bounds.extend(allPlaces[i]);
   }
 
   map.fitBounds(bounds);
 
+  allMarkers = [hanoiMarker, collegeMarker];
+
+  for (let i = 0; i < allMarkers.length; i++) {
+      allMarkers[i].addListener('click', function() {
+          map.setZoom(12);
+          map.setCenter(allMarkers[i].getPosition());
+        });
+      allMarkers[i].addListener('dblclick', function() {
+            map.fitBounds(bounds);
+        });
+  }
+
+  //Set some markers visible only when zooming in
+  let allMarkersHidden = [googleSFMarker, amsMarker];
+
+  for (let i = 0; i < allMarkersHidden.length; i++) {
+      allMarkersHidden[i].addListener('dblclick', function() {
+          map.fitBounds(bounds);
+        });
+  }
+  
+  
+  console.log("the current zoom is: " + map.getZoom());
+  google.maps.event.addListener(map, 'zoom_changed', function() {
+    var zoom = map.getZoom();
+    // iterate over markers and call setVisible
+    for (let i = 0; i < allMarkersHidden.length; i++) {
+        allMarkersHidden[i].setVisible(zoom >= 8);
+    }
+  });
+
 }
+
 
 
 
