@@ -236,31 +236,11 @@ function createMap() {
   const map = new google.maps.Map(
       document.getElementById("map"));
 
-  const hanoiMarker = new google.maps.Marker({
-    position: hanoi,
-    map: map,
-    title: 'Ha Noi, my hometown'
-  });
-
-  const collegeMarker = new google.maps.Marker({
-    position: college,
-    map: map,
-    title: "Pomona College, where I'm studying"
-  });
-
-  const googleSFMarker = new google.maps.Marker({
-    position: googleSF,
-    map: map,
-    visible: false,
-    title: "Google San Francisco"
-  });
-
-  const amsMarker = new google.maps.Marker({
-    position: ams,
-    map: map,
-    visible: false,
-    title: "Hanoi-Amsterdam high school"
-  });
+  const hanoiMarker = addMarker(hanoi, 'Ha Noi, my hometown', map, true);
+  const collegeMarker = addMarker(college, "Pomona College, where I'm studying", map, true);
+  const googleSFMarker = addMarker(googleSF, "Google San Francisco", map, false);
+  const amsMarker = addMarker(ams, "Hanoi-Amsterdam, my highschool", map, false);
+  
 
   //default state of map: show two primary markers
   let allPlaces = [college, hanoi];
@@ -291,9 +271,7 @@ function createMap() {
           map.fitBounds(bounds);
         });
   }
-  
-  
-  console.log("the current zoom is: " + map.getZoom());
+
   google.maps.event.addListener(map, 'zoom_changed', function() {
     var zoom = map.getZoom();
     // iterate over markers and call setVisible
@@ -302,6 +280,33 @@ function createMap() {
     }
   });
 
+  //add info windows for some markers
+  addLandmark(map, amsMarker, "I was the class monitor for 12 English 1, class of 2018 at Hanoi-Amsterdam high school");
+
+}
+
+/** Add a marker to the map*/
+function addMarker(position, title, map, visible ) {
+    return new google.maps.Marker({
+    position: position,
+    map: map,
+    visible: visible,
+    title: title
+  });
+}
+
+/** Adds a marker that shows an info window when clicked. */
+function addLandmark(map, marker, description) {
+  const infoWindow = new google.maps.InfoWindow({content: description});
+  marker.addListener('click', () => {
+    infoWindow.open(map, marker);
+    //close infoWindow if the user zooms out
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+        if (map.getZoom() <= 10) {
+            infoWindow.close();
+        };
+    });
+  });
 }
 
 
