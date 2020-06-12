@@ -89,7 +89,8 @@ async function getCurrentEmail() {
 function createCommentElementDelete(comment) {
   const commentElement = document.createElement('li');
   const textElement = document.createElement('span');
-  textElement.innerText = comment.userName + " says: " + comment.text + " ";
+  textElement.innerHTML = comment.userName + " says " + '<span style="color:#7e7e7e; font-style:italic;"> at '+ comment.time + '</span><br>'
+   + comment.text + " ";
 
   const deleteButtonElement = document.createElement('button');
   deleteButtonElement.innerText = 'Delete';
@@ -173,7 +174,8 @@ function createListElement(text) {
 /** Creates an element that represents a comment, without delete button. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
-  commentElement.innerText = comment.userName + " says: " + comment.text;
+  commentElement.innerHTML = comment.userName + " says: " + '<span style="color:#7e7e7e; font-style:italic;">  '+ comment.time + '</span><br>'
+   + comment.text;
   return commentElement;
 }
 
@@ -283,7 +285,7 @@ function createMap() {
   });
 
   //add info windows for some markers
-  addLandmark(map, amsMarker, "I was the class monitor for 12 English 1, class of 2018 at Hanoi-Amsterdam high school");
+  addLandmark(map, amsMarker, "I was the class monitor for 12 English 1, class of 2018 at Hanoi-Amsterdam high school.");
 
 }
 

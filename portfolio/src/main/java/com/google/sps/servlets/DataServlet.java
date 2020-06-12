@@ -15,6 +15,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.FetchOptions;
@@ -26,6 +29,10 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
+
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;  
+import java.util.Date; 
 import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -51,22 +58,24 @@ public class DataServlet extends HttpServlet {
     ArrayList<Comment> comments = new ArrayList<Comment>();
     int commentsNum = Integer.parseInt(request.getParameter("comments-num"));
     String sortingOrder = request.getParameter("sorting-cmt");
+    String languageCode = request.getParameter("translation-cmt");
     
     if (sortingOrder.equals("new")) {
-        comments = getCommentsSorted("new", commentsNum);
+        comments = getCommentsSorted("new", commentsNum, languageCode);
     } else if (sortingOrder.equals("old")) {
-        comments = getCommentsSorted("old", commentsNum);
+        comments = getCommentsSorted("old", commentsNum, languageCode);
     } else { //sort by userName
-        comments = getCommentsSortedUserNames(commentsNum);
+        comments = getCommentsSortedUserNames(commentsNum, languageCode);
     }
     Gson gson = new Gson();
     response.setContentType("application/json;");
+    response.setCharacterEncoding("UTF-8");
     response.getWriter().println(gson.toJson(comments));
   }
 
   /** Return an ArrayList of sorted comments based on newest to oldest or oldest to newest
   */
-  private ArrayList<Comment> getCommentsSorted(String sortingOrder, int commentsNum){
+  private ArrayList<Comment> getCommentsSorted(String sortingOrder, int commentsNum, String languageCode){
     Query query = new Query("Comment");
     if (sortingOrder.equals("new")) {
        query.addSort("timestamp", SortDirection.DESCENDING);
@@ -79,14 +88,27 @@ public class DataServlet extends HttpServlet {
 
     ArrayList<Comment> comments = new ArrayList<>();
 
+    // Do the translation.
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
+
+    // For converting into Date-Time from timestamp
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("PST"));
+
     for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(commentsNum))) {
       long id = entity.getKey().getId();
       String email = (String) entity.getProperty("email");
-      String text = (String) entity.getProperty("comment-text");
+
+      // Translate the text based on users' request
+      String originalText = (String) entity.getProperty("comment-text");
+      Translation trasnlatedText = translate.translate(originalText, Translate.TranslateOption.targetLanguage(languageCode));
+      String text = trasnlatedText.getTranslatedText();
+
       long timestamp = (long) entity.getProperty("timestamp");
+      String time = simpleDateFormat.format(new Date(timestamp));
       String userName = (String) getUserName(email);
 
-      Comment comment = new Comment(id, userName, text, timestamp);
+      Comment comment = new Comment(id, userName, text, time);
       comments.add(comment);
     }
     return comments;
@@ -94,7 +116,7 @@ public class DataServlet extends HttpServlet {
 
   /** @return an ArrayList of sorted comments based on user names
   */
-  private ArrayList<Comment> getCommentsSortedUserNames(int commentsNum) {
+  private ArrayList<Comment> getCommentsSortedUserNames(int commentsNum, String languageCode) {
     
     Query queryUserName = new Query("UserInfo").addSort("user-name", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -102,6 +124,14 @@ public class DataServlet extends HttpServlet {
     int count = 0;
 
     ArrayList<Comment> comments = new ArrayList<Comment>();
+
+    // Do the translation.
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
+
+    // For converting into Date-Time from timestamp
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("PST"));
+
     // Iterate over a query of UserInfo entities
     for (Entity userEntity : queryUser.asIterable()) {
         // Get the user email from the user name to access a query of 
@@ -113,14 +143,22 @@ public class DataServlet extends HttpServlet {
             .setFilter(new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, email)).addSort("timestamp", SortDirection.DESCENDING);
         PreparedQuery queryComment = datastore.prepare(queryCommentUnprepared);
 
-        // Iterate over a query of Comment entities based on the email address, with the order of user names
+        // Iterate over a query of Comment entities based on the email address, with the order of usernames
         for (Entity entity: queryComment.asIterable()) {
             long id = entity.getKey().getId();
-            String text = (String) entity.getProperty("comment-text");
+            
+            // Translate the text based on users' request
+            String originalText = (String) entity.getProperty("comment-text");
+            Translation trasnlatedText = translate.translate(originalText, Translate.TranslateOption.targetLanguage(languageCode));
+            String text = trasnlatedText.getTranslatedText();
+
             long timestamp = (long) entity.getProperty("timestamp");
+
+            // Get the time based on the timestamp
+            String time = simpleDateFormat.format(new Date(timestamp));
             String userName = (String) getUserName(email);
 
-            Comment comment = new Comment(id, userName, text, timestamp);
+            Comment comment = new Comment(id, userName, text, time);
             count += 1;
             comments.add(comment);
             if (count >= commentsNum) {break;}
