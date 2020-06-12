@@ -174,8 +174,8 @@ function createListElement(text) {
 /** Creates an element that represents a comment, without delete button. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
-  commentElement.innerHTML = comment.userName + " says: " + '<span style="color:#7e7e7e; font-style:italic;">  '+ comment.time + '</span><br>'
-   + comment.text;
+  commentElement.innerHTML = comment.userName + " says " + '<span style="color:#7e7e7e; font-style:italic;">  at '+ comment.time + '</span><br>'
+   + comment.text + '<br>';
   return commentElement;
 }
 

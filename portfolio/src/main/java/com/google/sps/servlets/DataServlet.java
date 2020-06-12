@@ -156,6 +156,7 @@ public class DataServlet extends HttpServlet {
 
             // Get the time based on the timestamp
             String time = simpleDateFormat.format(new Date(timestamp));
+            
             String userName = (String) getUserName(email);
 
             Comment comment = new Comment(id, userName, text, time);
@@ -242,4 +243,4 @@ public class DataServlet extends HttpServlet {
     return userName;
   }
 
-}go
+}
