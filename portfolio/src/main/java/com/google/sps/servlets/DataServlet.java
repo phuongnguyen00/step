@@ -60,12 +60,10 @@ public class DataServlet extends HttpServlet {
     String sortingOrder = request.getParameter("sorting-cmt");
     String languageCode = request.getParameter("translation-cmt");
     
-    if (sortingOrder.equals("new")) {
-        comments = getCommentsSorted("new", commentsNum, languageCode);
-    } else if (sortingOrder.equals("old")) {
-        comments = getCommentsSorted("old", commentsNum, languageCode);
+    if (sortingOrder.equals("new") || sortingOrder.equals("old")) {
+        comments = getCommentsSorted(sortingOrder, commentsNum, languageCode);
     } else { //sort by userName
-        comments = getCommentsSortedUserNames(commentsNum, languageCode);
+        comments = getCommentsSortedUserNames(sortingOrder, commentsNum, languageCode);
     }
     Gson gson = new Gson();
     response.setContentType("application/json;");
@@ -116,9 +114,14 @@ public class DataServlet extends HttpServlet {
 
   /** @return an ArrayList of sorted comments based on user names
   */
-  private ArrayList<Comment> getCommentsSortedUserNames(int commentsNum, String languageCode) {
+  private ArrayList<Comment> getCommentsSortedUserNames(String sortingOrder, int commentsNum, String languageCode) {
+    Query queryUserName = new Query("UserInfo");
     
-    Query queryUserName = new Query("UserInfo").addSort("user-name", SortDirection.ASCENDING);
+    if (sortingOrder.equals("users-a")){
+        queryUserName.addSort("user-name", SortDirection.ASCENDING);
+    } else { //(sortingOrder.equals("users-z"))
+        queryUserName.addSort("user-name", SortDirection.DESCENDING);
+    }
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery queryUser = datastore.prepare(queryUserName);
     int count = 0;

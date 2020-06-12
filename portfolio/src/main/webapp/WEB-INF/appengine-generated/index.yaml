@@ -5,3 +5,9 @@ indexes:
   - name: email
   - name: timestamp
     direction: desc
+
+- kind: Comment
+  properties:
+  - name: email
+  - name: timestamp
+    direction: asc
