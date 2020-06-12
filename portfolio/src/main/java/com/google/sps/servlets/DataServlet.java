@@ -89,7 +89,7 @@ public class DataServlet extends HttpServlet {
     ArrayList<Comment> comments = new ArrayList<>();
 
     // Do the translation.
-    Translate translator = TranslateOptions.getDefaultInstance().getService();
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
 
     // For converting into Date-Time from timestamp
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -101,12 +101,11 @@ public class DataServlet extends HttpServlet {
 
       // Translate the text based on users' request
       String originalText = (String) entity.getProperty("comment-text");
-      String text = getTranslatedContent(translator, originalText, languageCode);
+      Translation trasnlatedText = translate.translate(originalText, Translate.TranslateOption.targetLanguage(languageCode));
+      String text = trasnlatedText.getTranslatedText();
 
-      // Convert timestamp into datetime format
       long timestamp = (long) entity.getProperty("timestamp");
       String time = simpleDateFormat.format(new Date(timestamp));
-
       String userName = (String) getUserName(email);
 
       Comment comment = new Comment(id, userName, text, time);
@@ -126,8 +125,8 @@ public class DataServlet extends HttpServlet {
 
     ArrayList<Comment> comments = new ArrayList<Comment>();
 
-    // Get a translator.
-    Translate translator = TranslateOptions.getDefaultInstance().getService();
+    // Do the translation.
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
 
     // For converting into Date-Time from timestamp
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -150,12 +149,13 @@ public class DataServlet extends HttpServlet {
             
             // Translate the text based on users' request
             String originalText = (String) entity.getProperty("comment-text");
-            String text = getTranslatedContent(translator, originalText, languageCode);
+            Translation trasnlatedText = translate.translate(originalText, Translate.TranslateOption.targetLanguage(languageCode));
+            String text = trasnlatedText.getTranslatedText();
+
+            long timestamp = (long) entity.getProperty("timestamp");
 
             // Get the time based on the timestamp
-            long timestamp = (long) entity.getProperty("timestamp");
             String time = simpleDateFormat.format(new Date(timestamp));
-            
             String userName = (String) getUserName(email);
 
             Comment comment = new Comment(id, userName, text, time);
@@ -166,6 +166,16 @@ public class DataServlet extends HttpServlet {
         if (count >= commentsNum) {break;}
     }
     return comments;
+  }
+
+  /**
+   * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
+   * the Gson library dependency to pom.xml.*/
+   
+  private String convertToJsonUsingGson(ArrayList array) {
+    Gson gson = new Gson();
+    String json = gson.toJson(array);
+    return json;
   }
 
   @Override
@@ -205,24 +215,6 @@ public class DataServlet extends HttpServlet {
   }
 
   /**
-  * @return translated text into a language with languageCode
-  */
-  private String getTranslatedContent(Translate translator, String originalText, String languageCode){
-      Translation trasnlatedText = translator.translate(originalText, Translate.TranslateOption.targetLanguage(languageCode));
-      return trasnlatedText.getTranslatedText();
-  }
-
-    /**
-   * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
-   * the Gson library dependency to pom.xml.*/
-   
-  private String convertToJsonUsingGson(ArrayList array) {
-    Gson gson = new Gson();
-    String json = gson.toJson(array);
-    return json;
-  }
-
-  /**
    * @return the request parameter, or the default value if the parameter
    *         was not specified by the client
    */
@@ -234,9 +226,8 @@ public class DataServlet extends HttpServlet {
     return value;
   }
 
-  /** 
-   * @return username based on email address
-   */
+    /** @return username based on email address
+    */
   private String getUserName(String email){
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
@@ -251,4 +242,4 @@ public class DataServlet extends HttpServlet {
     return userName;
   }
 
-}
+}go
