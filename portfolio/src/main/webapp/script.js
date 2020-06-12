@@ -107,6 +107,7 @@ function createCommentElementDelete(comment) {
 
 /*
 * Show the number of comments that is consistent with the login status of the user
+* (Show the delete buttons or not)
 */
 function getCommentsUpdatedShown(){
     fetch('/login-check').then(response => response.json()).then((loginInfo) => {
@@ -116,15 +117,16 @@ function getCommentsUpdatedShown(){
         this.getCommentsUpdated(loggedInWithUserName, userName);
     });
 }
+
 /**
  * Fetches stats from the servers and adds them to the DOM.
  */
-
 function getCommentsUpdated(loggedInWithUserName, currentUserName) {
   let numComments = document.getElementById("comments-num").value;
   let sortingOrder = document.getElementById("sorting-cmt").value;
+  let languageCode = document.getElementById("translation-cmt").value;
 
-  fetch('/data?comments-num='+numComments+'&sorting-cmt='+sortingOrder).then(response => response.json()).then((comments) => {
+  fetch('/data?comments-num='+numComments+'&sorting-cmt='+sortingOrder+'&translation-cmt='+languageCode).then(response => response.json()).then((comments) => {
     // comments is the result of response.json()
     const commentsList = document.getElementById('comments-container');
     commentsList.innerHTML = '';
