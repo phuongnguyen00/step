@@ -90,7 +90,7 @@ public class DataServlet extends HttpServlet {
     Translate translate = TranslateOptions.getDefaultInstance().getService();
 
     // For converting into Date-Time from timestamp
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("PST"));
 
     for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(commentsNum))) {
@@ -132,7 +132,7 @@ public class DataServlet extends HttpServlet {
     Translate translate = TranslateOptions.getDefaultInstance().getService();
 
     // For converting into Date-Time from timestamp
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("PST"));
 
     // Iterate over a query of UserInfo entities
