@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+let currentEmail = "";
 /**
  * Adds a random greeting to the page.
  */
@@ -37,7 +38,6 @@ function addRandomFact() {
   // Add it to the page.
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = fact;
-  console.log(fact);
 }
 
 /**
@@ -78,11 +78,19 @@ function getEmail(userName){
     });
 }
 
+async function getCurrentEmail() {
+  const response = await fetch('/username-email');
+  const email = await response.json();
+  const currentEmail = email;
+  return currentEmail;
+}
+
 /** Creates an element that represents a task, including its delete button. */
 function createCommentElementDelete(comment) {
   const commentElement = document.createElement('li');
   const textElement = document.createElement('span');
-  textElement.innerText = comment.userName + " says: " + comment.text + " ";
+  textElement.innerHTML = comment.userName + " says " + '<span style="color:#7e7e7e; font-style:italic;"> at '+ comment.time + '</span><br>'
+   + comment.text + " ";
 
   const deleteButtonElement = document.createElement('button');
   deleteButtonElement.innerText = 'Delete';
@@ -100,6 +108,7 @@ function createCommentElementDelete(comment) {
 
 /*
 * Show the number of comments that is consistent with the login status of the user
+* (Show the delete buttons or not)
 */
 function getCommentsUpdatedShown(){
     fetch('/login-check').then(response => response.json()).then((loginInfo) => {
@@ -109,15 +118,16 @@ function getCommentsUpdatedShown(){
         this.getCommentsUpdated(loggedInWithUserName, userName);
     });
 }
+
 /**
  * Fetches stats from the servers and adds them to the DOM.
  */
-
 function getCommentsUpdated(loggedInWithUserName, currentUserName) {
   let numComments = document.getElementById("comments-num").value;
   let sortingOrder = document.getElementById("sorting-cmt").value;
+  let languageCode = document.getElementById("translation-cmt").value;
 
-  fetch('/data?comments-num='+numComments+'&sorting-cmt='+sortingOrder).then(response => response.json()).then((comments) => {
+  fetch('/data?comments-num='+numComments+'&sorting-cmt='+sortingOrder+'&translation-cmt='+languageCode).then(response => response.json()).then((comments) => {
     // comments is the result of response.json()
     const commentsList = document.getElementById('comments-container');
     commentsList.innerHTML = '';
@@ -137,8 +147,6 @@ function getCommentsUpdated(loggedInWithUserName, currentUserName) {
     } else {
         for (let i = 0; i < numToIterate; i++ ){
             if (currentUserName === comments[i].userName) {
-                console.log("I'm here, which means the user has the same name as this comment");
-                console.log(comments[i].text);
                 commentsList.appendChild(createCommentElementDelete(comments[i]));
             } else {
                 commentsList.appendChild(createCommentElement(comments[i]));
@@ -166,7 +174,8 @@ function createListElement(text) {
 /** Creates an element that represents a comment, without delete button. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('li');
-  commentElement.innerText = comment.userName + " says: " + comment.text;
+  commentElement.innerHTML = comment.userName + " says " + '<span style="color:#7e7e7e; font-style:italic;">  at '+ comment.time + '</span><br>'
+   + comment.text + '<br>';
   return commentElement;
 }
 
@@ -190,24 +199,21 @@ function getLogin() {
     const greeting = document.createElement('p');
     const logIn = !! + loginInfo[0];
     const userName = loginInfo[1];
-    let loggedInWithUserName = false;
-
+    const userEmail = loginInfo[2];
+    
     // Check if the user is logged in or not and display text accordingly
     if(!logIn) { 
-        console.log("From js, I'm not logged in.");
         greeting.innerHTML = 'Want to post a comment? <a href="/login">Log in</a>.';
         document.getElementById('login-form').style.display = 'none';
     } else {
-        console.log("Get to this step: logged in");
         if (!loginInfo[1]) {//if there is no userName
-            greeting.innerHTML = "Welcome! You need to have a user name to post a comment. <br>";
+            greeting.innerHTML = "Welcome " + userEmail + "! " + "You need to have a username to post a comment. You can also " + '<a href="/login">log out</a>' + ".<br>";
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('user-name-form').style.display = 'block';
         } else {
-            greeting.innerHTML = 'Welcome back ' + userName+ '! ' + '<a href="/login">Log out</a> or ';
+            greeting.innerHTML = 'Welcome back ' + userName+ ' (' + userEmail + ')!' + ' <a href="/login">Log out</a> or ';
             greeting.innerHTML += '<a href="contact-form.html#comment-header" onclick= "changeUserName()"> Change your username<a>';
             greeting.innerHTML += '.';
-            loggedInWithUserName = true;
         }  
     }
     greetingSection.appendChild(greeting);
@@ -218,10 +224,95 @@ function changeUserName(){
     document.getElementById('user-name-form').style.display = 'block';
 }
 
+/** Onload function for contact-form */
 function onLoadFunction(){
     getLogin();
     getCommentsUpdatedShown();
 }
+
+/** Creates a map and adds it to the page. */
+function createMap() {
+  const hanoi = {lat: 21.0278, lng: 105.8342};
+  const googleSF = {lat: 37.773972, lng: -122.431297};
+  const college = {lat: 34.0973, lng: -117.7131};
+  const ams = {lat: 21.0065, lng: 105.7977};
+
+  const map = new google.maps.Map(
+      document.getElementById("map"));
+
+  const hanoiMarker = addMarker(hanoi, 'Ha Noi, my hometown', map, true);
+  const collegeMarker = addMarker(college, "Pomona College, where I'm studying", map, true);
+  const googleSFMarker = addMarker(googleSF, "Google San Francisco", map, false);
+  const amsMarker = addMarker(ams, "Hanoi-Amsterdam, my highschool", map, false);
+  
+
+  //default state of map: show two primary markers
+  let allPlaces = [college, hanoi];
+  let bounds = new google.maps.LatLngBounds();
+  for (let i = 0; i < allPlaces.length; i++) {
+    bounds.extend(allPlaces[i]);
+  }
+
+  map.fitBounds(bounds);
+
+  allMarkers = [hanoiMarker, collegeMarker];
+
+  for (let i = 0; i < allMarkers.length; i++) {
+      allMarkers[i].addListener('click', function() {
+          map.setZoom(12);
+          map.setCenter(allMarkers[i].getPosition());
+        });
+      allMarkers[i].addListener('dblclick', function() {
+            map.fitBounds(bounds);
+        });
+  }
+
+  //Set some markers visible only when zooming in
+  let allMarkersHidden = [googleSFMarker, amsMarker];
+
+  for (let i = 0; i < allMarkersHidden.length; i++) {
+      allMarkersHidden[i].addListener('dblclick', function() {
+          map.fitBounds(bounds);
+        });
+  }
+
+  google.maps.event.addListener(map, 'zoom_changed', function() {
+    var zoom = map.getZoom();
+    // iterate over markers and call setVisible
+    for (let i = 0; i < allMarkersHidden.length; i++) {
+        allMarkersHidden[i].setVisible(zoom >= 8);
+    }
+  });
+
+  //add info windows for some markers
+  addLandmark(map, amsMarker, "I was the class monitor for 12 English 1, class of 2018 at Hanoi-Amsterdam high school.");
+
+}
+
+/** Add a marker to the map*/
+function addMarker(position, title, map, visible ) {
+    return new google.maps.Marker({
+    position: position,
+    map: map,
+    visible: visible,
+    title: title
+  });
+}
+
+/** Adds a marker that shows an info window when clicked. */
+function addLandmark(map, marker, description) {
+  const infoWindow = new google.maps.InfoWindow({content: description});
+  marker.addListener('click', () => {
+    infoWindow.open(map, marker);
+    //close infoWindow if the user zooms out
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+        if (map.getZoom() <= 10) {
+            infoWindow.close();
+        };
+    });
+  });
+}
+
 
 
 
