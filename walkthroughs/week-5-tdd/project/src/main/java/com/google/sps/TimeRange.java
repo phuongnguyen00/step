@@ -107,7 +107,7 @@ public final class TimeRange {
   public TimeRange mergeOverlapped(TimeRange other){
     if (this.contains(other)) {return this;} 
     else if (other.contains(this)) {return other;}
-    else if {// No TimeRange includes the whole other TimeRange
+    else {// No TimeRange includes the whole other TimeRange
         return fromStartDuration(this.start(), endLater(other).end());
     }
   }
