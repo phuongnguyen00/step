@@ -93,6 +93,26 @@ public final class TimeRange {
   }
 
   /**
+  * @return a timeRange that ends later than the other one 
+  */
+  private TimeRange endLater(TimeRange other){
+      return (this.end() <= other.end()) ? this : other;
+  }
+
+  /**
+   * Precondition: TimeRange other (parameter) always starts at the same time as or later than this TimeRange
+   * @param other a TimeRange that is overlapped with the current TimeRange
+   * @return a TimeRange that encompasses the two TimeRanges
+   */
+  public TimeRange mergeOverlapped(TimeRange other){
+    if (this.contains(other)) {return this;} 
+    else if (other.contains(this)) {return other;}
+    else if {// No TimeRange includes the whole other TimeRange
+        return fromStartDuration(this.start(), endLater(other).end());
+    }
+  }
+
+  /**
    * Checks if this range completely contains another range. This means that {@code other} is a
    * subset of this range. This is an inclusive bounds, meaning that if two ranges are the same,
    * they contain each other.
