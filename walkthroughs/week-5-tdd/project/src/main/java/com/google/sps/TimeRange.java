@@ -96,19 +96,21 @@ public final class TimeRange {
   * @return a timeRange that ends later than the other one 
   */
   private TimeRange endLater(TimeRange other){
-      return (this.end() <= other.end()) ? this : other;
+      return (this.end() >= other.end()) ? this : other;
   }
 
   /**
    * Precondition: TimeRange other (parameter) always starts at the same time as or later than this TimeRange
    * @param other a TimeRange that is overlapped with the current TimeRange
+   *        inclusive if one of the Time Ranges is also the end 
    * @return a TimeRange that encompasses the two TimeRanges
    */
-  public TimeRange mergeOverlapped(TimeRange other){
+  public TimeRange mergeOverlapped(TimeRange other, boolean inclusive){
     if (this.contains(other)) {return this;} 
     else if (other.contains(this)) {return other;}
     else {// No TimeRange includes the whole other TimeRange
-        return fromStartDuration(this.start(), endLater(other).end());
+        System.out.println("MERGING: " + this + " and " + other);
+        return fromStartEnd(this.start(), endLater(other).end(), inclusive);
     }
   }
 

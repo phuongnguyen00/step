@@ -19,15 +19,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Comparator;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-
     // Assume that one person does not have two meetings at the same time
 
+    // If no attendees, then the whole day is available
+    ArrayList<TimeRange> availableSlots = new ArrayList<TimeRange>();
+    if (request.getAttendees().isEmpty()){
+        availableSlots.add(TimeRange.WHOLE_DAY);
+        return availableSlots;
+    }
+    
     // CalendarAttendees is a lookup table where each person's name is the key
     // and the associated values are the times in the day when they are busy
     HashMap<String, ArrayList<TimeRange>> calendarAttendees = new HashMap<String, ArrayList<TimeRange>>(); 
@@ -45,24 +51,46 @@ public final class FindMeetingQuery {
         }
     }
 
-    // Step 2: Find all possible free windows
+    // Step 2: Find all occupied slots of relevent people based on the request
     ArrayList<TimeRange> allOccupiedSlots = new ArrayList<TimeRange>();
     for (String attendee: request.getAttendees()){
-        ArrayList<TimeRange> occupiedSlots = calendarAttendees.get(attendee);
-        for (int i = 0; i < occupiedSlots.size(); i++) {
-            allOccupiedSlots.add(occupiedSlots.get(i));
+        if (calendarAttendees.containsKey(attendee)) {
+            ArrayList<TimeRange> occupiedSlots = calendarAttendees.get(attendee);
+            for (int i = 0; i < occupiedSlots.size(); i++) {
+                allOccupiedSlots.add(occupiedSlots.get(i));
+            }
+        } else {// The attendee is not in the database yet, which means this attendee is assumed to be free all day
+            allOccupiedSlots.add(TimeRange.fromStartEnd(0, 0, false));
         }
+        
     }
+
+    //Step 3: Find all possible windows by merging occupied ones and fine the (inverse selection) of those times
+    System.out.println("The allOccupiedSlots is: " + allOccupiedSlots);
     Collections.sort(allOccupiedSlots, TimeRange.ORDER_BY_START);
+    System.out.println("The allOccupiedSlots after being sorted by start is: " + allOccupiedSlots);
+
+    System.out.println("START LOOKING FROM HERE");
     allOccupiedSlots = getOverlappedSlots(allOccupiedSlots);
+    System.out.println("The allOccupiedSlots after checking for overlapped is: " + allOccupiedSlots);
+
     ArrayList<TimeRange> allAvailableSlots = getInverseSlots(allOccupiedSlots);
-    ArrayList<TimeRange> availableSlots = new ArrayList<TimeRange>();
+    System.out.println("The allAvailableSlots after getting the inverse is: " + allAvailableSlots);
+
+    // Step 4: Return all possible windows with the correct duration (duration >= duration in request)
 
     for (int i = 0; i < allAvailableSlots.size(); i++) {
         if (allAvailableSlots.get(i).duration() >= request.getDuration()) {
             availableSlots.add(allAvailableSlots.get(i));
         }
     }
+    
+    //Make sure the returned arrayList is unique
+    Set<TimeRange> uniqueAvailableSlots = new HashSet<TimeRange>(availableSlots);
+    availableSlots.clear();
+    availableSlots.addAll(uniqueAvailableSlots);
+    Collections.sort(availableSlots, TimeRange.ORDER_BY_START);
+
     return availableSlots;
   }
   
@@ -79,12 +107,27 @@ public final class FindMeetingQuery {
       // Start from the first time slot, return the most concise treeset of time slots (that are either occupied or not)
       TimeRange overlappedSlot = timeSlots.get(0);
 
-      for (int i = 1; i < overlappedSlots.size(); i++){
-          if (overlappedSlots.get(i).overlaps(overlappedSlot)){
-              overlappedSlot = overlappedSlot.mergeOverlapped(overlappedSlots.get(i));
+      if (timeSlots.size() == 1) {
+          overlappedSlots.add(overlappedSlot);
+          return overlappedSlots;
+      }
+      
+      boolean inclusive = false;
+      //There are at least two things in timeSlots
+      for (int i = 1; i < timeSlots.size(); i++){
+
+          if (timeSlots.get(i).overlaps(overlappedSlot)){
+              if (timeSlots.get(i).end() == TimeRange.END_OF_DAY) {inclusive = true;}
+              overlappedSlot = overlappedSlot.mergeOverlapped(timeSlots.get(i), inclusive);
+              if (i == timeSlots.size() - 1) {// If this is the last time slot
+                    overlappedSlots.add(overlappedSlot);
+              }
           } else {
               overlappedSlots.add(overlappedSlot);
-              overlappedSlot = overlappedSlots.get(i);
+              overlappedSlot = timeSlots.get(i);
+              if (i == timeSlots.size() - 1) {
+                  overlappedSlots.add(overlappedSlot);
+              }
           }
       }
 
@@ -96,6 +139,7 @@ public final class FindMeetingQuery {
   * @return the other slots in a day
   */
   private ArrayList<TimeRange> getInverseSlots(ArrayList<TimeRange> timeSlots){
+       
        ArrayList<TimeRange> otherSlots = new ArrayList<TimeRange>();
        if (timeSlots.isEmpty()) {return otherSlots;}
 
@@ -105,19 +149,17 @@ public final class FindMeetingQuery {
            otherSlots.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, timeSlots.get(0).start(), false));
        }
 
-       if (timeSlots.get(timeSlots.size()-1).end() < TimeRange.END_OF_DAY) {
-           otherSlots.add(TimeRange.fromStartEnd(timeSlots.get(0).end(), TimeRange.END_OF_DAY, true));
-       }
-
-       if (timeSlots.size() == 1) {
-           return otherSlots;
-           System.out.println("I come into this slot");
-       }
-
        // All elements in timeSlots do not overlap
        for (int i = 0; i < timeSlots.size() - 1; i++) {
-           TimeRange otherSlot = TimeRange.fromStartEnd(timeSlots.get(i).end(), timeSlots.get(i+1).start(), true);
+           System.out.println("The timeslots being considered are: " + timeSlots.get(i) + " and " + timeSlots.get(i+1));
+           System.out.println("The result should be: " + timeSlots.get(i).end() + ", " + timeSlots.get(i+1).start()); 
+           TimeRange otherSlot = TimeRange.fromStartEnd(timeSlots.get(i).end(), timeSlots.get(i+1).start(), false);
            otherSlots.add(otherSlot);
+       }
+    
+       //The order is reserved
+       if (timeSlots.get(timeSlots.size()-1).end() < TimeRange.END_OF_DAY) {
+           otherSlots.add(TimeRange.fromStartEnd(timeSlots.get(timeSlots.size()-1).end(), TimeRange.END_OF_DAY, true));
        }
 
        return otherSlots;
