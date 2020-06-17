@@ -29,7 +29,7 @@ public final class FindMeetingQuery {
 
     // If no attendees, then the whole day is available
     ArrayList<TimeRange> availableSlots = new ArrayList<TimeRange>();
-    if (request.getAttendees().isEmpty()){
+    if (request.getAttendees().isEmpty() && request.getOptionalAttendees().isEmpty()){
         availableSlots.add(TimeRange.WHOLE_DAY);
         return availableSlots;
     }
@@ -65,7 +65,7 @@ public final class FindMeetingQuery {
         
     }
 
-    //Step 3: Find all possible windows by merging occupied ones and fine the (inverse selection) of those times
+    // Step 3: Find all possible windows by merging occupied ones and fine the (inverse selection) of those times
     System.out.println("The allOccupiedSlots is: " + allOccupiedSlots);
     Collections.sort(allOccupiedSlots, TimeRange.ORDER_BY_START);
     System.out.println("The allOccupiedSlots after being sorted by start is: " + allOccupiedSlots);
@@ -77,15 +77,19 @@ public final class FindMeetingQuery {
     ArrayList<TimeRange> allAvailableSlots = getInverseSlots(allOccupiedSlots);
     System.out.println("The allAvailableSlots after getting the inverse is: " + allAvailableSlots);
 
-    // Step 4: Return all possible windows with the correct duration (duration >= duration in request)
+    // Step 4: Get all possible windows with the correct duration (duration >= duration in request)
 
     for (int i = 0; i < allAvailableSlots.size(); i++) {
         if (allAvailableSlots.get(i).duration() >= request.getDuration()) {
             availableSlots.add(allAvailableSlots.get(i));
         }
     }
+
+    // Step 5: Get the slots that do not work for optional attendees and check if any of them overlap with 
+    // available slots for mandatory attendees. If yes, then return available slots. If not, 
+    // then merge all possible slots together
     
-    //Make sure the returned arrayList is unique
+    // Make sure the returned arrayList is unique
     Set<TimeRange> uniqueAvailableSlots = new HashSet<TimeRange>(availableSlots);
     availableSlots.clear();
     availableSlots.addAll(uniqueAvailableSlots);
@@ -113,7 +117,7 @@ public final class FindMeetingQuery {
       }
       
       boolean inclusive = false;
-      //There are at least two things in timeSlots
+      // There are at least two things in timeSlots
       for (int i = 1; i < timeSlots.size(); i++){
 
           if (timeSlots.get(i).overlaps(overlappedSlot)){
@@ -157,7 +161,7 @@ public final class FindMeetingQuery {
            otherSlots.add(otherSlot);
        }
     
-       //The order is reserved
+       // The order is reserved
        if (timeSlots.get(timeSlots.size()-1).end() < TimeRange.END_OF_DAY) {
            otherSlots.add(TimeRange.fromStartEnd(timeSlots.get(timeSlots.size()-1).end(), TimeRange.END_OF_DAY, true));
        }
