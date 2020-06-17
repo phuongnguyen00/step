@@ -16,6 +16,10 @@ package com.google.sps;
 
 import java.util.Comparator;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Class representing a span of time, enforcing properties (e.g. start comes before end) and
@@ -110,7 +114,6 @@ public final class TimeRange {
     if (this.contains(other)) {return this;} 
     else if (other.contains(this)) {return other;}
     else {// No TimeRange includes the whole other TimeRange
-        System.out.println("MERGING: " + this + " and " + other);
         return fromStartEnd(this.start(), endLater(other).end(), inclusive);
     }
   }
@@ -248,4 +251,17 @@ public final class TimeRange {
           return TimeRange.fromStartEnd(this.start(), other.end(), inclusive);
       }
   }
+
+  /**
+  * @param allSlots: an arrayList of time ranges
+  * @return an arrayList of unique time ranges sorted in ascending order (ORDER_BY_START)
+  */
+  public static ArrayList<TimeRange> getUniqueSortedSlots(ArrayList<TimeRange> allSlots){
+    Set<TimeRange> uniqueSlots = new HashSet<TimeRange>(allSlots);
+    allSlots.clear();
+    allSlots.addAll(uniqueSlots);
+    Collections.sort(allSlots, TimeRange.ORDER_BY_START);
+    return allSlots;
+  }
+  
 }
