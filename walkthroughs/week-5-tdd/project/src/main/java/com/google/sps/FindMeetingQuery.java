@@ -27,8 +27,9 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // Assume that one person does not have two meetings at the same time
 
-    // If no attendees, then the whole day is available
+    // If no attendees, then the whole day is available for the request (assume duration <= 1 day)
     ArrayList<TimeRange> availableSlots = new ArrayList<TimeRange>();
+
     if (request.getAttendees().isEmpty() && request.getOptionalAttendees().isEmpty()){
         availableSlots.add(TimeRange.WHOLE_DAY);
         return availableSlots;
@@ -36,34 +37,12 @@ public final class FindMeetingQuery {
     
     // CalendarAttendees is a lookup table where each person's name is the key
     // and the associated values are the times in the day when they are busy
-    HashMap<String, ArrayList<TimeRange>> calendarAttendees = new HashMap<String, ArrayList<TimeRange>>(); 
 
-    // Step 1: Store the information of the attenddees provided in events
-    for (Event event: events) {
-        for (String attendee: event.getAttendees()){
-            if (calendarAttendees.containsKey(attendee)) {
-                calendarAttendees.get(attendee).add(event.getWhen());
-            } else {
-                ArrayList<TimeRange> occupiedSlots = new ArrayList<TimeRange>();
-                occupiedSlots.add(event.getWhen());
-                calendarAttendees.put(attendee, occupiedSlots);
-            }
-        }
-    }
+    // Step 1: Store the information of the mandatory attenddees provided in events
+    HashMap<String, ArrayList<TimeRange>> calendarAttendees = createCommonCalendar(events);
 
     // Step 2: Find all occupied slots of relevent people based on the request
-    ArrayList<TimeRange> allOccupiedSlots = new ArrayList<TimeRange>();
-    for (String attendee: request.getAttendees()){
-        if (calendarAttendees.containsKey(attendee)) {
-            ArrayList<TimeRange> occupiedSlots = calendarAttendees.get(attendee);
-            for (int i = 0; i < occupiedSlots.size(); i++) {
-                allOccupiedSlots.add(occupiedSlots.get(i));
-            }
-        } else {// The attendee is not in the database yet, which means this attendee is assumed to be free all day
-            allOccupiedSlots.add(TimeRange.fromStartEnd(0, 0, false));
-        }
-        
-    }
+    ArrayList<TimeRange> allOccupiedSlots = getAllOccupiedSlots(calendarAttendees, request.getAttendees());
 
     // Step 3: Find all possible windows by merging occupied ones and fine the (inverse selection) of those times
     System.out.println("The allOccupiedSlots is: " + allOccupiedSlots);
@@ -85,17 +64,115 @@ public final class FindMeetingQuery {
         }
     }
 
-    // Step 5: Get the slots that do not work for optional attendees and check if any of them overlap with 
-    // available slots for mandatory attendees. If yes, then return available slots. If not, 
-    // then merge all possible slots together
-    
-    // Make sure the returned arrayList is unique
-    Set<TimeRange> uniqueAvailableSlots = new HashSet<TimeRange>(availableSlots);
-    availableSlots.clear();
-    availableSlots.addAll(uniqueAvailableSlots);
-    Collections.sort(availableSlots, TimeRange.ORDER_BY_START);
+    // Only consider optional attendees when all of mandatory attendees and optionala attendees are available 
+    // Step 5: Get the slots that work for optional attendees and check if any of them overlap with 
+    // available slots for mandatory attendees. If yes, then return available slots. 
 
-    return availableSlots;
+    System.out.println("OPTIONAL RANGE");
+    // Step 5a: Find all occupied slots of optional attendees in the common calendar
+    ArrayList<TimeRange> allOccupiedOptional = 
+            getAllOccupiedSlots(calendarAttendees, request.getOptionalAttendees());
+    System.out.println("Optional attendees are: " + request.getOptionalAttendees());
+    System.out.println("The allOccupiedOptional is: " + allOccupiedOptional);
+
+    // Step 5b: Condense the occupied slots (merge overlapping ones) after sorting all entries
+    Collections.sort(allOccupiedOptional, TimeRange.ORDER_BY_START);
+    allOccupiedOptional = getOverlappedSlots(allOccupiedOptional);
+    
+    System.out.println("The allOccupiedOptional after checking for overlapped is: " +     allOccupiedOptional);
+
+    // Step 5c: Get the available slots for optional attendees
+    ArrayList<TimeRange> availableOptional = getInverseSlots(allOccupiedOptional);
+    System.out.println("The availableOptional list of optional attendees are: " + availableOptional);
+    if (request.getAttendees().isEmpty()) {
+        ArrayList<TimeRange> availableOptionalOnly = TimeRange.getRangesLongEnough(availableOptional, (int)request.getDuration());
+        return availableOptionalOnly;
+    }
+    
+    // Step 5d: Find all possible open slots by comparing the optional occupied slots and the free slots of mandatory attendees
+    ArrayList<TimeRange> availableWithOptional = new ArrayList<TimeRange>();
+
+    for (int i = 0; i < availableSlots.size(); i++){
+        for (int j = 0; j < availableOptional.size(); j++) {
+            TimeRange availableSlot = availableSlots.get(i);
+            TimeRange availableOptionalSlot = availableOptional.get(j);
+
+            // If there is no overlap, then doesn't care about optional available slots
+            System.out.println("Consider the case of: availableSlot - " + availableSlot + " and availableOptionalSlot: " + availableOptionalSlot);
+            if (availableSlot.overlaps(availableOptionalSlot)) {
+                if (availableOptionalSlot.contains(availableSlot)) {
+                    availableWithOptional.add(availableSlot);
+                    System.out.println("Enter first if statement: optional contains available");
+                } else if (availableSlot.contains(availableOptionalSlot) && !availableSlot.equals(availableOptionalSlot)) {
+                    if (availableOptionalSlot.hasEnoughTime((int)request.getDuration())) 
+                           {availableWithOptional.add(availableOptionalSlot);}
+                    System.out.println("Enter second if statement: available contains optional");
+
+                } else { // Two slots overlap but one does not contain another
+                    System.out.println("Enter third if statement: overlap but no containment");
+                    TimeRange newSlot = availableSlot.getIntersection(availableOptionalSlot);
+                    if (newSlot.hasEnoughTime((int)request.getDuration())) 
+                           {availableWithOptional.add(newSlot);}
+                }
+            // If there is no current overlap with the optional slot and no future overlaps, 
+            // then no overlap with next optional slots in this iteration
+            } else {
+                if (availableSlot.start() < availableOptionalSlot.start()) { 
+                    System.out.println("No overlap -> break out of inner for loop");
+                    break;
+                } else { //There maybe future overlaps
+                    System.out.println("No overlap now but maybe in the future -> next iteration of inner for loop");
+                    continue;
+                }
+            }
+        }
+    }
+
+    // Step 5e: If there are slots that work for all mandatory and optional attendees, then return 
+    System.out.println("Available times wiht optional people in mind: " + availableWithOptional);
+    if (!availableWithOptional.isEmpty()) return getUniqueSortedSlots(availableWithOptional);
+
+    // Make sure the returned arrayList is unique
+    return getUniqueSortedSlots(availableSlots);
+  }
+  
+  /**
+  * Create a common calendar that stores all occcupied time slots of people from a collection of events
+  */
+  private HashMap<String, ArrayList<TimeRange>> createCommonCalendar(Collection<Event> events) {
+    HashMap<String, ArrayList<TimeRange>> calendarAttendees = new HashMap<String, ArrayList<TimeRange>>(); 
+
+    for (Event event: events) {
+        for (String attendee: event.getAttendees()){
+            if (calendarAttendees.containsKey(attendee)) {
+                calendarAttendees.get(attendee).add(event.getWhen());
+            } else {
+                ArrayList<TimeRange> occupiedSlots = new ArrayList<TimeRange>();
+                occupiedSlots.add(event.getWhen());
+                calendarAttendees.put(attendee, occupiedSlots);
+            }
+        }
+    }
+
+    return calendarAttendees;
+  }
+
+  /**
+  * @return an arrayList of all occupied slots from a common calendar of attendees
+  */
+  private ArrayList<TimeRange> getAllOccupiedSlots(HashMap<String, ArrayList<TimeRange>> calendar, Collection<String> attendees){
+    ArrayList<TimeRange> allOccupiedSlots = new ArrayList<TimeRange>();
+    for (String attendee: attendees){
+        if (calendar.containsKey(attendee)) {
+            ArrayList<TimeRange> occupiedSlots = calendar.get(attendee);
+            for (int i = 0; i < occupiedSlots.size(); i++) {
+                allOccupiedSlots.add(occupiedSlots.get(i));
+            }
+        } else {// The attendee is not in the database yet, which means this attendee is assumed to be free all day
+            allOccupiedSlots.add(TimeRange.fromStartEnd(0, 0, false));
+        } 
+    }
+    return allOccupiedSlots;
   }
   
   /**
@@ -168,4 +245,17 @@ public final class FindMeetingQuery {
 
        return otherSlots;
   }
+  
+  /**
+  * @param allSlots: an arrayList of time ranges
+  * @return an arrayList of unique time ranges sorted in ascending order (ORDER_BY_START)
+  */
+  private ArrayList<TimeRange> getUniqueSortedSlots(ArrayList<TimeRange> allSlots){
+    Set<TimeRange> uniqueSlots = new HashSet<TimeRange>(allSlots);
+    allSlots.clear();
+    allSlots.addAll(uniqueSlots);
+    Collections.sort(allSlots, TimeRange.ORDER_BY_START);
+    return allSlots;
+  }
+
 }

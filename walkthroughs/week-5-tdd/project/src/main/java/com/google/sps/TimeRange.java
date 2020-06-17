@@ -15,6 +15,7 @@
 package com.google.sps;
 
 import java.util.Comparator;
+import java.util.ArrayList;
 
 /**
  * Class representing a span of time, enforcing properties (e.g. start comes before end) and
@@ -204,5 +205,47 @@ public final class TimeRange {
    */
   public static TimeRange fromStartDuration(int start, int duration) {
     return new TimeRange(start, duration);
+  }
+  
+  /**
+  * Check if one event starts before another
+  */
+  public boolean precedes(TimeRange other){
+      return this.start() <= other.start();
+  }
+
+  /**
+  * Check if a time range is long enough
+  */
+  public boolean hasEnoughTime(int duration) {
+      return this.duration() >= duration;
+  }
+
+  /**
+  * @return an arrayList of all time ranges that are long enough for a list of time ranges
+  */
+  public static ArrayList<TimeRange> getRangesLongEnough(ArrayList<TimeRange> someTimeRanges, int duration){
+      ArrayList<TimeRange> longEnoughRanges = new ArrayList<TimeRange>();
+      for (int i = 0; i < someTimeRanges.size(); i++){
+          if (someTimeRanges.get(i).hasEnoughTime(duration)) {
+              longEnoughRanges.add(someTimeRanges.get(i));
+          }
+      }
+      return longEnoughRanges;
+  }
+  
+  /**
+  * Get the intersection of two overlapping time ranges. One does not contain another. See below example
+  *  |-----|
+  *     |------|
+  */
+  public TimeRange getIntersection(TimeRange other) {
+      if (this.precedes(other)) {
+          boolean inclusive = (this.end() == TimeRange.END_OF_DAY);
+          return TimeRange.fromStartEnd(other.start(), this.end(), inclusive);
+      } else {
+          boolean inclusive = (this.end() == TimeRange.END_OF_DAY);
+          return TimeRange.fromStartEnd(this.start(), other.end(), inclusive);
+      }
   }
 }
