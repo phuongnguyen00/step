@@ -67,7 +67,7 @@ public final class FindMeetingQuery {
             // Do not check long enough ranges because duration is checked when finding the intersection
             ArrayList<TimeRange> availableOptional = getFreeTimeSlots(commonCalendar, optionalAttendees);
 
-            ArrayList<TimeRange> availableWithOptional = getIntersection(availableSlots, availableOptional, meetingDuration);
+            ArrayList<TimeRange> availableWithOptional = getIntersectionWith(availableSlots, availableOptional, meetingDuration);
 
             // If there are some slots that work for all mandatory and optional attendees, then return 
             if (!availableWithOptional.isEmpty()) return TimeRange.getUniqueSortedSlots(availableWithOptional);
@@ -210,7 +210,7 @@ public final class FindMeetingQuery {
   /**
   * @return a list of intersecting time ranges with primary slots as the starting point. The returned time ranges must satisfy the duration.
   */
-  private ArrayList<TimeRange> getIntersection(ArrayList<TimeRange> primarySlots, ArrayList<TimeRange> optionalSlots, int duration) {
+  private ArrayList<TimeRange> getIntersectionWith(ArrayList<TimeRange> primarySlots, ArrayList<TimeRange> optionalSlots, int duration) {
       ArrayList<TimeRange> intersectionSlots = new ArrayList<TimeRange>();
 
       for (TimeRange primary: primarySlots){
