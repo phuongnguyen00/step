@@ -234,7 +234,6 @@ public final class FindMeetingQuery {
             } else {
                 if (primary.start() < optional.start()) {break;} 
                 //There maybe future overlaps, so skip this iteration
-                else {continue;}
             }
         }
     }
