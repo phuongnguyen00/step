@@ -418,7 +418,7 @@ public final class FindMeetingQueryTest {
       // Event             |--A--|     |--B--|
       // Optional  |--C-|                  |--C----|
       //                               |--C--|
-      // Options                                   |--------------| (first two ones too short)
+      // Options                                   |--------------| (first two ones are too short)
       
       Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0815AM, false),

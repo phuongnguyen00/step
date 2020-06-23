@@ -46,16 +46,16 @@ public final class FindMeetingQuery {
         HashMap<String, ArrayList<TimeRange>> commonCalendar = createCommonCalendar(events);
 
         // Step 2: Return calendars based on whether there are only mandatory attendees, optional attendees, or both
-        if (mandatoryAttendees.isEmpty() && !optionalAttendees.isEmpty()) {
+        if (!mandatoryAttendees.isEmpty() && optionalAttendees.isEmpty()) {
+            ArrayList<TimeRange> allAvailableSlots = getFreeTimeSlots(commonCalendar, mandatoryAttendees);
+            availableSlots = TimeRange.getRangesLongEnough(allAvailableSlots, meetingDuration);
+            return availableSlots;
+        
+        } else if (mandatoryAttendees.isEmpty() && !optionalAttendees.isEmpty()) {
 
             ArrayList<TimeRange> availableOptional = getFreeTimeSlots(commonCalendar, optionalAttendees);
             ArrayList<TimeRange> availableOptionalOnly = TimeRange.getRangesLongEnough(availableOptional, meetingDuration);
-            return TimeRange.getUniqueSortedSlots(availableOptionalOnly);
-
-        } else if (!mandatoryAttendees.isEmpty() && optionalAttendees.isEmpty()) {
-            ArrayList<TimeRange> allAvailableSlots = getFreeTimeSlots(commonCalendar, mandatoryAttendees);
-            availableSlots = TimeRange.getRangesLongEnough(allAvailableSlots, meetingDuration);
-            return TimeRange.getUniqueSortedSlots(availableSlots);
+            return availableOptionalOnly;
 
         } else { // Both mandatory and optional attendees are present
             // Get the slots that work for optional attendees and check if any of them overlap with 
@@ -73,7 +73,7 @@ public final class FindMeetingQuery {
             if (!availableWithOptional.isEmpty()) return TimeRange.getUniqueSortedSlots(availableWithOptional);
 
             // Otherwise, just return the slots that work for mandatory attendees
-            return TimeRange.getUniqueSortedSlots(availableSlots);
+            return availableSlots;
         }
     }
   }
