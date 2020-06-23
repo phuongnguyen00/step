@@ -127,8 +127,8 @@ public final class FindMeetingQuery {
     for (String attendee: attendees){
         if (calendar.containsKey(attendee)) {
             ArrayList<TimeRange> occupiedSlots = calendar.get(attendee);
-            for (int i = 0; i < occupiedSlots.size(); i++) {
-                allOccupiedSlots.add(occupiedSlots.get(i));
+            for (TimeRange occupiedSlot: occupiedSlots) {
+                allOccupiedSlots.add(occupiedSlot);
             }
         } else {// The attendee is not in the database yet, which means this attendee is assumed to be free all day
             allOccupiedSlots.add(TimeRange.fromStartEnd(0, 0, false));
@@ -213,10 +213,8 @@ public final class FindMeetingQuery {
   private ArrayList<TimeRange> getIntersection(ArrayList<TimeRange> primarySlots, ArrayList<TimeRange> optionalSlots, int duration) {
       ArrayList<TimeRange> intersectionSlots = new ArrayList<TimeRange>();
 
-      for (int i = 0; i < primarySlots.size(); i++){
-        for (int j = 0; j < optionalSlots.size(); j++) {
-            TimeRange primary = primarySlots.get(i);
-            TimeRange optional = optionalSlots.get(j);
+      for (TimeRange primary: primarySlots){
+        for (TimeRange optional: optionalSlots) {
 
             // If there is no overlap, then doesn't care about optional available slots
             if (primary.overlaps(optional)) {
