@@ -62,6 +62,8 @@ public class DataServlet extends HttpServlet {
     
     if (sortingOrder.equals("new") || sortingOrder.equals("old")) {
         comments = getCommentsSorted(sortingOrder, commentsNum, languageCode);
+    } else if (sortingOrder.equals("your-cmt")){
+        comments = getYourComments(commentsNum, languageCode);
     } else { //sort by userName
         comments = getCommentsSortedUserNames(sortingOrder, commentsNum, languageCode);
     }
@@ -168,6 +170,48 @@ public class DataServlet extends HttpServlet {
             if (count >= commentsNum) {break;}
         }
         if (count >= commentsNum) {break;}
+    }
+    return comments;
+  }
+
+  /**
+  * @return comments of the current user
+  */
+  private ArrayList<Comment> getYourComments(int commentsNum, String languageCode){
+      UserService userService = UserServiceFactory.getUserService();
+      String userEmail = userService.getCurrentUser().getEmail();
+
+      Query queryCommentUnprepared =
+        new Query("Comment")
+            .setFilter(new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, userEmail)).addSort("timestamp", SortDirection.DESCENDING);
+     
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      PreparedQuery queryComment = datastore.prepare(queryCommentUnprepared);
+
+      ArrayList<Comment> comments = new ArrayList<>();
+
+    // Do the translation.
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
+
+    // For converting into Date-Time from timestamp
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("PST"));
+
+    for (Entity entity : queryComment.asIterable(FetchOptions.Builder.withLimit(commentsNum))) {
+      long id = entity.getKey().getId();
+      String email = (String) entity.getProperty("email");
+
+      // Translate the text based on users' request
+      String originalText = (String) entity.getProperty("comment-text");
+      Translation trasnlatedText = translate.translate(originalText, Translate.TranslateOption.targetLanguage(languageCode));
+      String text = trasnlatedText.getTranslatedText();
+
+      long timestamp = (long) entity.getProperty("timestamp");
+      String time = simpleDateFormat.format(new Date(timestamp));
+      String userName = (String) getUserName(email);
+
+      Comment comment = new Comment(id, userName, text, time);
+      comments.add(comment);
     }
     return comments;
   }

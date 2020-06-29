@@ -5,6 +5,16 @@
     <title>Contact | Phuong Nguyen</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/6593008338.js" crossorigin="anonymous"></script>
+
+    <!--For icon tab-->
+    <link rel="apple-touch-icon" sizes="180x180" href="favIcon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favIcon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favIcon/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="favIcon/safari-pinned-tab.svg" color="#fca4a2">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
     <script src="script.js"></script>
   </head>
 
@@ -41,6 +51,15 @@
 
     <h2 id="comment-header">Comments</h2>
     <div id="login-status"></div>
+    
+    <div id="user-name-form" style="display:none;">
+         <p><form action="/user-info" method="POST">
+            <p><label>Update your username* <br>
+            </label><input type="text" name="user-name" placeholder = "Phuong" required><br>
+            <button type="submit"> Send</button>
+        </form></p>
+    </div>
+
     <div id="login-form">
     <form action="/data" method="POST">
       <p> <label>Add a comment:</label><br>
@@ -49,14 +68,6 @@
       <button type="submit" onclick="getCommentsUpdatedShown()"> Send!</button></p>
       </p>
     </form>
-    </div>
-    
-    <div id="user-name-form" style="display:none;">
-         <p><form action="/user-info" method="POST">
-            <p><label>Update your username* <br>
-            </label><input type="text" name="user-name" placeholder = "Phuong" required><br>
-            <button type="submit"> Send</button>
-        </form></p>
     </div>
     
     <div>
@@ -80,6 +91,7 @@
             <option value="old">Oldest to Newest</option>
             <option value="users-a">Usernames (A-Z)</option>
             <option value="users-z">Usernames (Z-A)</option>
+            <option value="your-cmt">Your comment(s)</option>
         </select></p>
     </div>
     <div id="translation">

@@ -15,6 +15,11 @@
 package com.google.sps;
 
 import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Class representing a span of time, enforcing properties (e.g. start comes before end) and
@@ -90,6 +95,27 @@ public final class TimeRange {
     // Case 3: |---------|
     //            |---|
     return this.contains(other.start) || other.contains(this.start);
+  }
+
+  /**
+  * @return a timeRange that ends later than the other one 
+  */
+  private TimeRange endLater(TimeRange other){
+      return (this.end() >= other.end()) ? this : other;
+  }
+
+  /**
+   * Precondition: TimeRange other (parameter) always starts at the same time as or later than this TimeRange
+   * @param other a TimeRange that is overlapped with the current TimeRange
+   *        inclusive if one of the Time Ranges is also the end 
+   * @return a TimeRange that encompasses the two TimeRanges
+   */
+  public TimeRange mergeOverlapped(TimeRange other, boolean inclusive){
+    if (this.contains(other)) {return this;} 
+    else if (other.contains(this)) {return other;}
+    else {// No TimeRange includes the whole other TimeRange
+        return fromStartEnd(this.start(), endLater(other).end(), inclusive);
+    }
   }
 
   /**
@@ -183,4 +209,59 @@ public final class TimeRange {
   public static TimeRange fromStartDuration(int start, int duration) {
     return new TimeRange(start, duration);
   }
+  
+  /**
+  * Check if one event starts before another
+  */
+  public boolean precedes(TimeRange other){
+      return this.start() <= other.start();
+  }
+
+  /**
+  * Check if a time range is long enough
+  */
+  public boolean hasEnoughTime(int duration) {
+      return this.duration() >= duration;
+  }
+
+  /**
+  * @return an arrayList of all time ranges that are long enough for a list of time ranges
+  */
+  public static ArrayList<TimeRange> getRangesLongEnough(ArrayList<TimeRange> someTimeRanges, int duration){
+      ArrayList<TimeRange> longEnoughRanges = new ArrayList<TimeRange>();
+      for (int i = 0; i < someTimeRanges.size(); i++){
+          if (someTimeRanges.get(i).hasEnoughTime(duration)) {
+              longEnoughRanges.add(someTimeRanges.get(i));
+          }
+      }
+      return longEnoughRanges;
+  }
+  
+  /**
+  * Get the intersection of two overlapping time ranges. One does not contain another. See below example
+  *  |-----|
+  *     |------|
+  */
+  public TimeRange getIntersection(TimeRange other) {
+      if (this.precedes(other)) {
+          boolean inclusive = (this.end() == TimeRange.END_OF_DAY);
+          return TimeRange.fromStartEnd(other.start(), this.end(), inclusive);
+      } else {
+          boolean inclusive = (this.end() == TimeRange.END_OF_DAY);
+          return TimeRange.fromStartEnd(this.start(), other.end(), inclusive);
+      }
+  }
+
+  /**
+  * @param allSlots: an arrayList of time ranges
+  * @return an arrayList of unique time ranges sorted in ascending order (ORDER_BY_START)
+  */
+  public static ArrayList<TimeRange> getUniqueSortedSlots(ArrayList<TimeRange> allSlots){
+    Set<TimeRange> uniqueSlots = new HashSet<TimeRange>(allSlots);
+    allSlots.clear();
+    allSlots.addAll(uniqueSlots);
+    Collections.sort(allSlots, TimeRange.ORDER_BY_START);
+    return allSlots;
+  }
+  
 }
